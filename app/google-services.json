@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "501935072870",
+    "project_id": "project-voyageur",
+    "storage_bucket": "project-voyageur.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501935072870:android:38221b484c2f46c175afa7",
+        "android_client_info": {
+          "package_name": "com.voyageur.application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "501935072870-6gm94ig4k37j1io42kstt2abuo0h0mit.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voyageur.application",
+            "certificate_hash": "e22ed5a74bf69249f78feee12f0982fd0be5a5bd"
+          }
+        },
+        {
+          "client_id": "501935072870-uembruep8kdcpg6i5dm23kd0ehqokno2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHxUugO5BDA8LjHEBJEVmlZlHfod39Jbk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "501935072870-uembruep8kdcpg6i5dm23kd0ehqokno2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Voyageur" parent="Theme.Material3.DayNight">
+        <item name="android:fontFamily">@font/dmsans_main</item>
+        <item name="android:colorBackground">@color/white</item>
+    </style>
+
+    <style name="Theme.Voyageur" parent="Base.Theme.Voyageur" />
+
+</resources>

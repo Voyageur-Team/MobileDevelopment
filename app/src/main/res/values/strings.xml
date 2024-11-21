@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">Voyageur</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="title_onboarding1">Welcome to Voyageur!</string>
+    <string name="title_onboarding2">Simplify Your Trip Planning with Friends</string>
+    <string name="title_onboarding3">Let\'s Vote our Dream Trip!</string>
+    <string name="title_onboarding4">Let\'s Go!</string>
+
+    <string name="desc_onboarding1">Tired of the hassle of planning group trips? Voyageur is here to make your next adventure stress-free.</string>
+    <string name="desc_onboarding2">Collaborate with your friends to create the perfect itinerary based on everyone’s preferences!</string>
+    <string name="desc_onboarding3">Explore recommended destinations for your group, then vote to choose the perfect match —Voyageur makes it easy and fun!</string>
+    <string name="desc_onboarding4">Stop planning out and let’s go out. —Voyageur make dream trip happen!</string>
+    <string name="content_tab_text">This is Tab %1$d</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="your_web_client_id">501935072870-uembruep8kdcpg6i5dm23kd0ehqokno2.apps.googleusercontent.com</string>
+    <string name="email_salah">Format Email Salah!</string>
+    <string name="email_digunakan">Email sudah digunakan!</string>
+    <string name="nama_kosong">Nama tidak boleh kosong!</string>
+    <string name="password_kurang">Password harus 8 karakter</string>
+    <string name="password_tidak_sama">Password tidak sama</string>
+    <string name="belum_akun">Belum punya akun? Register</string>
+    <string name="email_tidak_ada">Email tidak ada!</string>
+    <string name="password_salah">Password salah!</string>
+    <string name="gagal_login">Login gagal!</string>
+    <string name="email_kosong">Email tidak boleh kosong!</string>
+    <string name="password_kosong">Password tidak boleh kosong!</string>
+    <string name="login_gagal">Masukkan akun anda dengan benar!</string>
+
+
+    <string-array name="popular_destination">
+        <item>Nusa Penida</item>
+        <item>Danau Toba</item>
+        <item>Raja Ampat</item>
+    </string-array>
+
+    <string-array name="popular_destination_location">
+        <item>Bali</item>
+        <item>Sumatera Utara</item>
+        <item>Papua Barat</item>
+    </string-array>
+
+    <string-array name="popular_destination_image">
+        <item>@drawable/dummypopular1</item>
+        <item>@drawable/dummypopular2</item>
+        <item>@drawable/dummypopular3</item>
+    </string-array>
+
+    <string-array name="popular_destination_description">
+        <item>Explore the beauty of Nusa Penida, a small island located in the southeast of Bali. Nusa Penida is famous for its beautiful beaches, such as Kelingking Beach, Crystal Bay, and Angel’s Billabong.</item>
+        <item>Visit Danau Toba, the largest volcanic lake in Indonesia. Located in North Sumatra, Danau Toba is surrounded by beautiful mountains and is home to the Batak people.</item>
+        <item>Discover the underwater paradise of Raja Ampat, located in West Papua. Raja Ampat is known for its stunning coral reefs, diverse marine life, and crystal-clear waters.</item>
+    </string-array>
+
+    <string-array name="popular_destination_rating">
+        <item>4.8</item>
+        <item>4.7</item>
+        <item>4.9</item>
+    </string-array>
+
+    <string-array name="popular_destination_review">
+        <item>120 Reviews</item>
+        <item>100 Reviews</item>
+        <item>150 Reviews</item>
+    </string-array>
+
+    <string-array name="popular_destination_price">
+        <item>$100</item>
+        <item>$150</item>
+        <item>$200</item>
+    </string-array>
+
+
+</resources>

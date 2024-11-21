@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/voyageur_icon"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/voyageur_icon"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Voyageur"
+        tools:targetApi="31">
+        <activity
+            android:name=".view.ui.CityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.PreferencesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.DetailPopularActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.DetailRecomendationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.VotingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.MakeTripActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.RecomendationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.DetailTripActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.InviteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.OnboardingActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".view.ui.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.ui.TripActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>
