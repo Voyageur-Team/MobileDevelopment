@@ -32,6 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView44" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCities"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
@@ -58,12 +59,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView48"
+        android:id="@+id/tvDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="24dp"
-        android:text="Next"
+        android:text="Done"
         android:textColor="@color/colorPrimary"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/textView47"

@@ -3,77 +3,86 @@ package com.voyageur.application.view.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetCredentialResponse
-import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.voyageur.application.R
 import com.voyageur.application.databinding.ActivityLoginBinding
+import com.voyageur.application.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var auth: FirebaseAuth
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        auth = Firebase.auth
+        observeViewModel()
 
         binding.btnLoginGoogle.setOnClickListener {
             signIn()
         }
     }
 
+    private fun observeViewModel() {
+        authViewModel.authState.observe(this) { currentUser ->
+            if (currentUser != null) {
+                authViewModel.fetchUserFromFirestore(currentUser.uid)
+            }
+        }
+
+        authViewModel.userLiveData.observe(this) { user ->
+            if (user != null) {
+                updateUI()
+            } else {
+                Log.w(TAG, "User data not found or failed to fetch")
+            }
+        }
+    }
+
     private fun signIn() {
-        val credentialManager = CredentialManager.create(this)
+        val credentialManager = androidx.credentials.CredentialManager.create(this)
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
             .setServerClientId(getString(R.string.your_web_client_id))
             .build()
 
-        val request = GetCredentialRequest.Builder()
+        val request = androidx.credentials.GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
 
         lifecycleScope.launch {
             try {
-                val result: GetCredentialResponse = credentialManager.getCredential(
+                val result: androidx.credentials.GetCredentialResponse = credentialManager.getCredential(
                     request = request,
                     context = this@LoginActivity,
                 )
                 handleSignIn(result)
-            } catch (e: GetCredentialException) {
-                Log.d("Error", e.message.toString())
+            } catch (e: androidx.credentials.exceptions.GetCredentialException) {
+                Log.d(TAG, e.message.toString())
             }
         }
     }
 
-    private fun handleSignIn(result: GetCredentialResponse) {
+    private fun handleSignIn(result: androidx.credentials.GetCredentialResponse) {
         when (val credential = result.credential) {
-            is CustomCredential -> {
+            is androidx.credentials.CustomCredential -> {
                 if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     try {
-                        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                        val googleIdTokenCredential =
+                            GoogleIdTokenCredential.createFrom(credential.data)
                         firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
                     } catch (e: GoogleIdTokenParsingException) {
                         Log.e(TAG, "Received an invalid google id token response", e)
@@ -82,7 +91,6 @@ class LoginActivity : AppCompatActivity() {
                     Log.e(TAG, "Unexpected type of credential")
                 }
             }
-
             else -> {
                 Log.e(TAG, "Unexpected type of credential")
             }
@@ -90,34 +98,31 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential: AuthCredential = GoogleAuthProvider.getCredential(idToken, null)
-        auth.signInWithCredential(credential)
+        val credential = GoogleAuthProvider.getCredential(idToken, null)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithCredential:success")
-                    val user: FirebaseUser? = auth.currentUser
-                    updateUI(user)
+                    val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+                    user?.let { authViewModel.saveUserToFirestore(it) }
                 } else {
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    updateUI(null)
                 }
             }
     }
 
-    private fun updateUI(currentUser: FirebaseUser?) {
-        if (currentUser != null) {
-            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-            finish()
-        }
+    private fun updateUI() {
+        startActivity(Intent(this, PreferencesActivity::class.java))
+        finish()
     }
 
     override fun onStart() {
         super.onStart()
-        val currentUser = auth.currentUser
-        updateUI(currentUser)
+        authViewModel.getCurrentUser()
     }
 
     companion object {
         private const val TAG = "LoginActivity"
     }
 }
+
