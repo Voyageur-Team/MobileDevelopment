@@ -1,33 +1,58 @@
 package com.voyageur.application.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseUser
-import com.voyageur.application.data.model.User
-import com.voyageur.application.data.repository.AuthRepository
+import com.voyageur.application.data.model.LoginDataAccount
+import com.voyageur.application.data.model.RegisterDataAccount
+import com.voyageur.application.data.model.ResponseLogin
+import com.voyageur.application.data.network.ApiConfig
 import kotlinx.coroutines.launch
 
 class AuthViewModel : ViewModel() {
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
 
-    private val authRepository = AuthRepository()
+    private val _isError = MutableLiveData<Boolean>()
+    val isError: LiveData<Boolean> = _isError
 
-    val userLiveData: LiveData<User?> = authRepository.userLiveData
-    val authState: LiveData<FirebaseUser?> = authRepository.authState
+    private val _message = MutableLiveData<String>()
+    val message: LiveData<String> = _message
 
-    fun getCurrentUser() {
-        authRepository.getCurrentUser()
-    }
+    private val _userLogin = MutableLiveData<ResponseLogin>()
+    val userLogin: LiveData<ResponseLogin> = _userLogin
 
-    fun saveUserToFirestore(user: FirebaseUser) {
+    fun register(registerData: RegisterDataAccount){
         viewModelScope.launch {
-            authRepository.saveUserToFirestore(user)
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService("").register(registerData)
+                _isError.value = false
+                _message.value = "Registrasi berhasil!"
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
-    fun fetchUserFromFirestore(userId: String) {
+    fun login(loginData: LoginDataAccount){
         viewModelScope.launch {
-            authRepository.fetchUserFromFirestore(userId)
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService("").login(loginData)
+                _userLogin.value = response
+                _isError.value = false
+                _message.value = "Login berhasil!"
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = e.message
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 }

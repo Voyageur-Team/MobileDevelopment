@@ -1,26 +1,39 @@
 package com.voyageur.application.view.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.viewModels
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.LinkMovementMethod
+import android.text.method.PasswordTransformationMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.GoogleAuthProvider
+import androidx.core.content.ContextCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.voyageur.application.R
+import com.voyageur.application.data.model.LoginDataAccount
+import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityLoginBinding
 import com.voyageur.application.viewmodel.AuthViewModel
-import kotlinx.coroutines.launch
+import com.voyageur.application.viewmodel.TokenViewModel
+import com.voyageur.application.viewmodel.ViewModelFactory
 
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 class LoginActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityLoginBinding
-    private val authViewModel: AuthViewModel by viewModels()
+    private val loginViewModel: AuthViewModel by lazy {
+        ViewModelProvider(this)[AuthViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,101 +41,137 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        observeViewModel()
+        showLoading(false)
+        setupSpannableString()
+        setupObservers()
+//        setupAnimation()
 
-        binding.btnLoginGoogle.setOnClickListener {
-            signIn()
-        }
-    }
+        binding.btnLogin.setOnClickListener {
+            binding.etEmail.clearFocus()
+            binding.etPassword.clearFocus()
 
-    private fun observeViewModel() {
-        authViewModel.authState.observe(this) { currentUser ->
-            if (currentUser != null) {
-                authViewModel.fetchUserFromFirestore(currentUser.uid)
-            }
-        }
-
-        authViewModel.userLiveData.observe(this) { user ->
-            if (user != null) {
-                updateUI()
-            } else {
-                Log.w(TAG, "User data not found or failed to fetch")
-            }
-        }
-    }
-
-    private fun signIn() {
-        val credentialManager = androidx.credentials.CredentialManager.create(this)
-
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(false)
-            .setServerClientId(getString(R.string.your_web_client_id))
-            .build()
-
-        val request = androidx.credentials.GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-
-        lifecycleScope.launch {
-            try {
-                val result: androidx.credentials.GetCredentialResponse = credentialManager.getCredential(
-                    request = request,
-                    context = this@LoginActivity,
+            if (checkAkun()) {
+                showLoading(true)
+                val requestLogin = LoginDataAccount(
+                    binding.etEmail.text.toString().trim(),
+                    binding.etPassword.text.toString().trim()
                 )
-                handleSignIn(result)
-            } catch (e: androidx.credentials.exceptions.GetCredentialException) {
-                Log.d(TAG, e.message.toString())
+
+                loginViewModel.login(requestLogin)
+            } else {
+                showLoginError()
+            }
+        }
+
+        binding.checkBox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.etPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            } else {
+                binding.etPassword.transformationMethod = PasswordTransformationMethod.getInstance()
             }
         }
     }
 
-    private fun handleSignIn(result: androidx.credentials.GetCredentialResponse) {
-        when (val credential = result.credential) {
-            is androidx.credentials.CustomCredential -> {
-                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                    try {
-                        val googleIdTokenCredential =
-                            GoogleIdTokenCredential.createFrom(credential.data)
-                        firebaseAuthWithGoogle(googleIdTokenCredential.idToken)
-                    } catch (e: GoogleIdTokenParsingException) {
-                        Log.e(TAG, "Received an invalid google id token response", e)
+    private fun setupSpannableString() {
+        val text = getString(R.string.belum_akun)
+        val spannableString = SpannableString(text)
+        val clickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+            }
+        }
+
+        val startIndex = text.indexOf("Register")
+        val endIndex = startIndex + "Register".length
+        spannableString.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannableString.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorPrimary)),
+            startIndex,
+            endIndex,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.tvAskAkun.text = spannableString
+        binding.tvAskAkun.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun setupObservers() {
+        val preferences = AppPreferences.getInstance(dataStore)
+        val mainViewModel = ViewModelProvider(this, ViewModelFactory(preferences))[TokenViewModel::class.java]
+
+        mainViewModel.getLoginSession().observe(this) { sessionTrue ->
+            if (sessionTrue) {
+                navigateToStoryActivity()
+            }
+        }
+
+        loginViewModel.isLoading.observe(this) { showLoading(it) }
+        loginViewModel.message.observe(this) { response ->
+            response?.let { checkLogin(mainViewModel) }
+        }
+    }
+
+    private fun checkLogin(userLoginViewModel: TokenViewModel) {
+        loginViewModel.isError.observe(this) { isError ->
+            loginViewModel.message.observe(this) { message ->
+                if (!isError) {
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    val user = loginViewModel.userLogin.value
+                    if (user != null) {
+                        userLoginViewModel.saveLoginSession(true)
+                        userLoginViewModel.saveToken(user.loginResult.token)
+                        userLoginViewModel.saveName(user.loginResult.userName)
+                        userLoginViewModel.saveUserId(user.loginResult.userId)
+                    } else {
+                        Toast.makeText(this, "Data pengguna tidak lengkap.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Log.e(TAG, "Unexpected type of credential")
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 }
-            }
-            else -> {
-                Log.e(TAG, "Unexpected type of credential")
             }
         }
     }
 
-    private fun firebaseAuthWithGoogle(idToken: String) {
-        val credential = GoogleAuthProvider.getCredential(idToken, null)
-        FirebaseAuth.getInstance().signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "signInWithCredential:success")
-                    val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-                    user?.let { authViewModel.saveUserToFirestore(it) }
-                } else {
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                }
-            }
+    private fun checkAkun(): Boolean {
+        return binding.etEmail.isEmailValid && binding.etPassword.isPasswordValid
     }
 
-    private fun updateUI() {
-        startActivity(Intent(this, PreferencesActivity::class.java))
-        finish()
+    private fun showLoginError() {
+        if (!binding.etEmail.isEmailValid) binding.etEmail.error = getString(R.string.email_tidak_ada)
+        if (!binding.etPassword.isPasswordValid) binding.etPassword.error = getString(R.string.password_salah)
+        Toast.makeText(this, R.string.gagal_login, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onStart() {
-        super.onStart()
-        authViewModel.getCurrentUser()
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    companion object {
-        private const val TAG = "LoginActivity"
+    private fun navigateToStoryActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    private fun setupAnimation() {
+        ObjectAnimator.ofFloat(binding.logoApp, View.TRANSLATION_X, -40f, 40f).apply {
+            duration = 5000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val messageAnimator = ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(500)
+        val emailAnimator = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
+        val passwordAnimator = ObjectAnimator.ofFloat(binding.etPassword, View.ALPHA, 1f).setDuration(500)
+        val loginButtonAnimator = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
+
+        AnimatorSet().apply {
+            playSequentially(
+                messageAnimator,
+                emailAnimator,
+                passwordAnimator,
+                loginButtonAnimator
+            )
+            start()
+        }
     }
 }
-

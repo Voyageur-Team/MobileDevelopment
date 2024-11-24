@@ -8,43 +8,48 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.voyageur.application.R
+import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
-    private lateinit var auth: FirebaseAuth
+    private lateinit var pref: AppPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = Firebase.auth
-        val firebaseUser = auth.currentUser
+        pref = AppPreferences.getInstance(applicationContext.dataStore)
 
-        if (firebaseUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
-            return
-        }
+        checkToken()
 
         val navView: BottomNavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_plans
-            )
+            setOf(R.id.navigation_home, R.id.navigation_plans)
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        binding.btnFloating.setOnClickListener{
+        binding.btnFloating.setOnClickListener {
             startActivity(Intent(this, TripActivity::class.java))
         }
+    }
+
+    private fun checkToken() {
+        val token = runBlocking { pref.getToken().first() }
+        if (token.isEmpty()) {
+            navigateToLogin()
+        }
+    }
+
+    private fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 }

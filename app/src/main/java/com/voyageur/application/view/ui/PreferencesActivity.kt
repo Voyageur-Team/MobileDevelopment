@@ -3,21 +3,17 @@ package com.voyageur.application.view.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.viewModels
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.firestore.FirebaseFirestore
 import com.voyageur.application.data.adapter.PreferencesAdapter
 import com.voyageur.application.databinding.ActivityPreferencesBinding
 import com.voyageur.application.viewmodel.PreferencesViewModel
-import com.voyageur.application.viewmodel.PreferencesViewModelFactory
 
 class PreferencesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPreferencesBinding
-    private val preferencesViewModel: PreferencesViewModel by viewModels {
-        PreferencesViewModelFactory(FirebaseFirestore.getInstance())
-    }
+    private lateinit var preferencesViewModel: PreferencesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +28,7 @@ class PreferencesActivity : AppCompatActivity() {
             startActivity(Intent(this, CityActivity::class.java))
         }
 
-        preferencesViewModel.fetchPreferences()
+        preferencesViewModel.getAllPreferences()
     }
 
     private fun setupRecyclerView() {
@@ -47,6 +43,16 @@ class PreferencesActivity : AppCompatActivity() {
             } else {
                 Log.w("PreferencesActivity", "No preferences found")
             }
+        }
+
+        preferencesViewModel.isError.observe(this) { isError ->
+            if (isError) {
+                Log.e("PreferencesActivity", "Error fetching preferences")
+            }
+        }
+
+        preferencesViewModel.isLoading.observe(this) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
         }
     }
 }

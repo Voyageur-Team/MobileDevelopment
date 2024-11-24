@@ -2,14 +2,16 @@ package com.voyageur.application.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.firestore.FirebaseFirestore
-import com.voyageur.application.data.repository.PreferencesRepository
+import com.voyageur.application.data.network.ApiService
 
-class PreferencesViewModelFactory(private val firestore: FirebaseFirestore) :
-    ViewModelProvider.Factory {
+class PreferencesViewModelFactory(
+    private val apiService: ApiService
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(PreferencesViewModel::class.java)) {
-            return PreferencesViewModel(PreferencesRepository(firestore)) as T
+            return PreferencesViewModel(apiService) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

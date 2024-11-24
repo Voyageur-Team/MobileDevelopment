@@ -12,7 +12,7 @@ data class ResponseRegister(
 )
 
 data class RegisterDataAccount(
-	@field:SerializedName("name")
+	@field:SerializedName("userName")
 	val name: String,
 
 	@field:SerializedName("email")

@@ -2,23 +2,21 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.CredentialManager
-import androidx.lifecycle.lifecycleScope
-import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.ViewModelProvider
+import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivitySettingsBinding
-import kotlinx.coroutines.launch
+import com.voyageur.application.viewmodel.TokenViewModel
+import com.voyageur.application.viewmodel.ViewModelFactory
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private val firebaseAuth: FirebaseAuth by lazy {
-        FirebaseAuth.getInstance()
-    }
-    private lateinit var auth: FirebaseAuth
+    private lateinit var pref: AppPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,32 +24,40 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        auth = Firebase.auth
+        pref = AppPreferences.getInstance(applicationContext.dataStore)
 
-        val user = firebaseAuth.currentUser
-        user?.let {
-            binding.textView25.text = it.displayName
-            binding.textView26.text = it.email
-
-            it.photoUrl?.let { photoUrl ->
-                Glide.with(this)
-                    .load(photoUrl)
-                    .into(binding.imageView5)
-            }
-        }
+        setUserData()
 
         binding.btnLogout.setOnClickListener {
-            signOut()
+            logoutUser()
         }
     }
 
-    private fun signOut() {
-        lifecycleScope.launch {
-            val credentialManager = CredentialManager.create(this@SettingsActivity)
-            auth.signOut()
-            credentialManager.clearCredentialState(ClearCredentialStateRequest())
-            startActivity(Intent(this@SettingsActivity, LoginActivity::class.java))
-            finish()
+    private fun setUserData() {
+        val userName: String
+        runBlocking {
+            userName = pref.getName().first()
         }
+
+        binding.tvName.text = userName
     }
+
+    private fun logoutUser(){
+        val dialog = AlertDialog.Builder(this)
+        val mainViewModel = ViewModelProvider(this, ViewModelFactory(pref))[TokenViewModel::class.java]
+        dialog.setTitle("Logout")
+        dialog.setMessage("Apakah anda yakin ingin keluar dari akun?")
+        dialog.setPositiveButton("Ya") { _, _ ->
+            mainViewModel.clearDataLogin()
+            Toast.makeText(this, "Logout Sukses", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+        }
+        dialog.setNegativeButton("Tidak") { dialog, _ ->
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
 }

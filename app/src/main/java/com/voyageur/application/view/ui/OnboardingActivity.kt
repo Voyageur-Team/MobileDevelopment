@@ -6,19 +6,19 @@ import android.text.Html
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.voyageur.application.R
 import com.voyageur.application.data.adapter.OnboardingAdapter
+import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityOnboardingBinding
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @Suppress("DEPRECATION")
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding
+    private lateinit var pref: AppPreferences
     private var dots: Array<TextView?> = arrayOfNulls(4)
     private var onBoardingAdapter: OnboardingAdapter? = null
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,14 +27,9 @@ class OnboardingActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.hide()
 
-        auth = Firebase.auth
+        pref = AppPreferences.getInstance(applicationContext.dataStore)
 
-        if (auth.currentUser != null) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-            return
-        }
+        checkToken()
 
         binding.skipButton.setOnClickListener {
             val intent = Intent(this@OnboardingActivity, LoginActivity::class.java)
@@ -45,11 +40,24 @@ class OnboardingActivity : AppCompatActivity() {
         onBoardingAdapter = OnboardingAdapter(this)
         binding.slideViewPager.adapter = onBoardingAdapter
 
-        setUpindicator(0)
+        setUpIndicator(0)
         binding.slideViewPager.addOnPageChangeListener(viewListener)
     }
 
-    private fun setUpindicator(position: Int) {
+    private fun checkToken() {
+        val token = runBlocking { pref.getToken().first() }
+        if (token.isNotEmpty()) {
+            navigateToMain()
+        }
+    }
+
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+    }
+
+    private fun setUpIndicator(position: Int) {
         dots = arrayOfNulls(4)
         binding.indicatorLayout.removeAllViews()
 
@@ -68,7 +76,7 @@ class OnboardingActivity : AppCompatActivity() {
         override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
         override fun onPageSelected(position: Int) {
-            setUpindicator(position)
+            setUpIndicator(position)
         }
 
         override fun onPageScrollStateChanged(state: Int) {}

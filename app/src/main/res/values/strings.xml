@@ -29,6 +29,8 @@
     <string name="email_kosong">Email tidak boleh kosong!</string>
     <string name="password_kosong">Password tidak boleh kosong!</string>
     <string name="login_gagal">Masukkan akun anda dengan benar!</string>
+    <string name="login_success">Berhasil login</string>
+    <string name="register_gagal">Gagal melakukan registrasi</string>
 
 
     <string-array name="popular_destination">

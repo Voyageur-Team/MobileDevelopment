@@ -7,20 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.voyageur.application.R
 import com.voyageur.application.data.adapter.PopularDestinationAdapter
 import com.voyageur.application.data.model.PopularDestination
+import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    private val firebaseAuth: FirebaseAuth by lazy {
-        FirebaseAuth.getInstance()
-    }
+    private lateinit var pref: AppPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,17 +30,9 @@ class HomeFragment : Fragment() {
 
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
 
-        val user = firebaseAuth.currentUser
-        user?.let {
-            binding.textView.text = "Halo, ${it.displayName ?: "User"}!"
-            binding.textView2.text = it.email
+        pref = AppPreferences.getInstance(requireContext().dataStore)
 
-            it.photoUrl?.let { photoUrl ->
-                Glide.with(requireContext())
-                    .load(photoUrl)
-                    .into(binding.imageView2)
-            }
-        }
+        setUserData()
 
         binding.imageView2.setOnClickListener {
             startActivity(Intent(activity, SettingsActivity::class.java))
@@ -56,6 +46,17 @@ class HomeFragment : Fragment() {
 
         return root
     }
+
+    private fun setUserData() {
+        pref.getName().asLiveData().observe(viewLifecycleOwner) { userName ->
+            if (!userName.isNullOrEmpty()) {
+                binding.tvName.text = userName
+            } else {
+                binding.tvName.text = "User"
+            }
+        }
+    }
+
 
     private fun getPopularDestination(): ArrayList<PopularDestination> {
         val dataName = resources.getStringArray(R.array.popular_destination)
@@ -86,6 +87,7 @@ class HomeFragment : Fragment() {
         val popularDestinationAdapter = PopularDestinationAdapter(list)
         binding.rvPopularDestination.adapter = popularDestinationAdapter
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
