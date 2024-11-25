@@ -8,10 +8,12 @@ import com.voyageur.application.data.model.ResponseLogin
 import com.voyageur.application.data.model.ResponsePreferences
 import com.voyageur.application.data.model.ResponseRegister
 import com.voyageur.application.data.model.ResponseTrip
+import com.voyageur.application.data.model.UserTrip
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface ApiService {
     @POST("auth/register")
@@ -26,9 +28,14 @@ interface ApiService {
     @GET("/city")
     fun getAllCities() : Response<ResponseCities>
 
-    @POST("/trip/create")
+    @POST("/trips/create")
     suspend fun createTrip(
         @Body createTrip: CreateTrip
     ): Response<ResponseTrip>
+
+    @GET("trips/user/{userId}")
+    suspend fun getTripsByUserId(
+        @Path("userId") userId: String
+    ): Response<UserTrip>
 
 }
