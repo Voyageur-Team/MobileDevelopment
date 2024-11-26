@@ -1,5 +1,6 @@
 package com.voyageur.application.view.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -98,7 +99,6 @@ class TripActivity : AppCompatActivity() {
         }
     }
 
-
     private fun setupObservers() {
         tripViewModel.isLoading.observe(this) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -114,7 +114,14 @@ class TripActivity : AppCompatActivity() {
         tripViewModel.message.observe(this) { message ->
             if (!tripViewModel.isError.value!!) {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-                finish()
+                val tripId = tripViewModel.trip.value?.data?.id
+                tripId?.let {
+                    val intent = Intent(this, InviteActivity::class.java).apply {
+                        putExtra("TRIP_ID", it)
+                    }
+                    startActivity(intent)
+                    finish()
+                }
             }
         }
     }

@@ -3,11 +3,15 @@ package com.voyageur.application.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.voyageur.application.data.model.DataItem
+import com.voyageur.application.data.model.Cities
 import com.voyageur.application.data.network.ApiConfig
 import kotlinx.coroutines.launch
 
-class PlansViewModel : ViewModel(){
+class MakeTripViewModel : ViewModel() {
+
+    private val _cities = MutableLiveData<List<Cities>>()
+    val cities: MutableLiveData<List<Cities>> = _cities
+
     private val _isError = MutableLiveData<Boolean>()
     val isError: MutableLiveData<Boolean> = _isError
 
@@ -17,26 +21,23 @@ class PlansViewModel : ViewModel(){
     private val _message = MutableLiveData<String>()
     val message: MutableLiveData<String> = _message
 
-    private val _trips = MutableLiveData<List<DataItem>>()
-    val trips: MutableLiveData<List<DataItem>> = _trips
-
-    fun getAllTripsUserId(userId: String, token: String) {
+    fun getAllCities(token: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = ApiConfig.getApiService(token).getTripsByUserId(userId)
+                val response = ApiConfig.getApiService(token).getAllCities()
                 if (response.isSuccessful && response.body() != null) {
-                    val userTrip = response.body()!!
-                    _trips.value = userTrip.data
+                    _cities.value = response.body()!!.data
                     _isError.value = false
-                    _message.value = "Trips berhasil diambil!"
+                    _message.value = "Cities fetched successfully!"
                 } else {
                     _isError.value = true
-                    _message.value = response.errorBody()?.string() ?: "Terjadi kesalahan."
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
                 }
             } catch (e: Exception) {
+                _cities.value = emptyList()
                 _isError.value = true
-                _message.value = e.localizedMessage ?: "Gagal mengambil trips."
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }

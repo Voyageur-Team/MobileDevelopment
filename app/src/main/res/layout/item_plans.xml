@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Gambar Trip -->
         <ImageView
             android:id="@+id/imageTrip"
             android:layout_width="80dp"
@@ -22,7 +21,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:src="@drawable/trip_img" />
 
-        <!-- Judul Trip -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
@@ -37,7 +35,6 @@
             app:layout_constraintStart_toEndOf="@id/imageTrip"
             app:layout_constraintTop_toTopOf="@id/imageTrip" />
 
-        <!-- Deskripsi Trip -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="0dp"
@@ -51,7 +48,6 @@
             android:ellipsize="end"
             android:maxLines="2" />
 
-        <!-- Tanggal Trip -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="0dp"
@@ -63,7 +59,6 @@
             app:layout_constraintTop_toBottomOf="@id/tvDescription"
             app:layout_constraintEnd_toEndOf="@id/tvDescription" />
 
-        <!-- Peserta -->
         <TextView
             android:id="@+id/tvParticipants"
             android:layout_width="0dp"

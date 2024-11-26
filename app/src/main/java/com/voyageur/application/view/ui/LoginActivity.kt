@@ -101,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
 
         mainViewModel.getLoginSession().observe(this) { sessionTrue ->
             if (sessionTrue) {
-                navigateToStoryActivity()
+                navigateToApp()
             }
         }
 
@@ -146,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
 
-    private fun navigateToStoryActivity() {
+    private fun navigateToApp() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)

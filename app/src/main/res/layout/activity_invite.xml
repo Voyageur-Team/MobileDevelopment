@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="32dp"
         android:text="Link Undangan"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -54,11 +54,11 @@
         android:background="@drawable/trip_shape"
         android:backgroundTint="#F7F7F9"
         android:ems="10"
-        android:inputType="none"
         android:focusable="false"
+        android:inputType="none"
         android:padding="16dp"
-        android:screenReaderFocusable="true"
         android:text="voyageur.com/invite/123456"
+        android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/btnSalink"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView15" />
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:text="Anggota"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -78,15 +78,15 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAnggota"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="24dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toTopOf="@+id/btnLanjut"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.003"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView17" />
+        app:layout_constraintTop_toBottomOf="@+id/textView17"
+        tools:listitem="@layout/item_anggota" />
 
     <Button
         android:id="@+id/btnLanjut"
@@ -96,14 +96,13 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/colorPrimary"
+        android:paddingVertical="16dp"
         android:text="Lanjut"
         android:textStyle="bold"
-        android:paddingVertical="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvAnggota"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/btnBack"
@@ -112,8 +111,17 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toStartOf="@+id/textView12"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_back" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/rvAnggota"
+        app:layout_constraintEnd_toEndOf="@+id/rvAnggota"
+        app:layout_constraintStart_toStartOf="@+id/rvAnggota"
+        app:layout_constraintTop_toTopOf="@+id/rvAnggota" />
 </androidx.constraintlayout.widget.ConstraintLayout>

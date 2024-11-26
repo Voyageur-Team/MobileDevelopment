@@ -26,7 +26,7 @@ interface ApiService {
     fun getAllPreferences() : Response<ResponsePreferences>
 
     @GET("/city")
-    fun getAllCities() : Response<ResponseCities>
+    suspend fun getAllCities() : Response<ResponseCities>
 
     @POST("/trips/create")
     suspend fun createTrip(
@@ -37,5 +37,10 @@ interface ApiService {
     suspend fun getTripsByUserId(
         @Path("userId") userId: String
     ): Response<UserTrip>
+
+    @GET("trips/{tripId}/detail")
+    suspend fun getTripDetail(
+        @Path("tripId") tripId: String
+    ): Response<ResponseTrip>
 
 }
