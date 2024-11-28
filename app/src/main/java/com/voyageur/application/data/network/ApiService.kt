@@ -43,4 +43,8 @@ interface ApiService {
         @Path("tripId") tripId: String
     ): Response<ResponseTrip>
 
+    @GET("trips/{tripId}/participants")
+    suspend fun getParticipants(
+        @Path("tripId") tripId: String
+    ): Response<UserTrip>
 }

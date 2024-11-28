@@ -2,5 +2,10 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.Voyageur" parent="Theme.Material3.DayNight">
         <item name="android:fontFamily">@font/dmsans_main</item>
+        <item name="android:colorBackground">@color/white</item>
+
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorSecondary">@color/colorSecondary</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
     </style>
 </resources>

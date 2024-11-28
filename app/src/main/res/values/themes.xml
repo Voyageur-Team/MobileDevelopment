@@ -1,10 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.Voyageur" parent="Theme.Material3.DayNight">
         <item name="android:fontFamily">@font/dmsans_main</item>
         <item name="android:colorBackground">@color/white</item>
+
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorSecondary">@color/colorSecondary</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
+
+        <item name="actionBarStyle">@style/WhiteActionBar</item>
     </style>
 
     <style name="Theme.Voyageur" parent="Base.Theme.Voyageur" />
 
+    <style name="WhiteActionBar" parent="Widget.AppCompat.ActionBar.Solid">
+        <item name="background">@color/white</item>
+        <item name="titleTextStyle">@style/WhiteActionBarTitleText</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="WhiteActionBarTitleText" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/black</item>
+    </style>
 </resources>

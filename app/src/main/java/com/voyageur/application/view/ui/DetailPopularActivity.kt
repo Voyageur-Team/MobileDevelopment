@@ -1,5 +1,6 @@
 package com.voyageur.application.view.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.voyageur.application.databinding.ActivityDetailPopularBinding
@@ -27,6 +28,10 @@ class DetailPopularActivity : AppCompatActivity() {
             locationPopularDestination.text = location
             ratingPopularDestination.text = rating.toString()
             pricePopularDestination.text = price.toString()
+        }
+
+        binding.btnRencana.setOnClickListener {
+            startActivity(Intent(this, TripActivity::class.java))
         }
     }
 }

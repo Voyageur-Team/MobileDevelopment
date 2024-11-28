@@ -2,12 +2,17 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.voyageur.application.R
 import com.voyageur.application.data.adapter.InviteAdapter
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityInviteBinding
@@ -23,8 +28,17 @@ class InviteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityInviteBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        supportActionBar?.hide()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        supportActionBar?.title = "Undang Temanmu"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         pref = AppPreferences.getInstance(applicationContext.dataStore)
 
         val tripId = intent.getStringExtra("TRIP_ID")
@@ -44,7 +58,19 @@ class InviteActivity : AppCompatActivity() {
         }
 
         binding.btnLanjut.setOnClickListener {
-            startActivity(Intent(this, DetailTripActivity::class.java))
+            val intent = Intent(this, DetailTripActivity::class.java)
+            intent.putExtra("TRIP_ID", tripId)
+            startActivity(intent)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -70,3 +96,4 @@ class InviteActivity : AppCompatActivity() {
         }
     }
 }
+

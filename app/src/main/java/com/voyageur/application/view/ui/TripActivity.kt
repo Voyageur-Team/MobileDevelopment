@@ -2,11 +2,16 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.asLiveData
+import com.voyageur.application.R
 import com.voyageur.application.data.model.CreateTrip
 import com.voyageur.application.data.model.Participants
 import com.voyageur.application.data.repository.AppPreferences
@@ -25,8 +30,15 @@ class TripActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTripBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
-        supportActionBar?.hide()
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+        supportActionBar?.title = "Buat Trip"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)
 
@@ -62,6 +74,16 @@ class TripActivity : AppCompatActivity() {
 
                 tripViewModel.createTrip(createTrip, userToken!!)
             }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
