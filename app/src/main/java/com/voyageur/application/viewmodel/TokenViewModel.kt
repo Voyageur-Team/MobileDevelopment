@@ -46,15 +46,23 @@ class TokenViewModel(private val pref: AppPreferences) : ViewModel() {
         }
     }
 
+    fun getUserId(): LiveData<String> {
+        return pref.getUserId().asLiveData()
+    }
+
     fun saveUserId(userId: String) {
         viewModelScope.launch {
             pref.saveUserId(userId)
         }
     }
 
-    fun getUserId(): LiveData<String> {
-        return pref.getUserId().asLiveData()
+    fun getEmail(): LiveData<String> {
+        return pref.getEmail().asLiveData()
     }
 
-
+    fun saveEmail(email: String) {
+        viewModelScope.launch {
+            pref.saveEmail(email)
+        }
+    }
 }

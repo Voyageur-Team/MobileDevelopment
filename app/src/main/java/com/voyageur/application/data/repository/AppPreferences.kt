@@ -13,6 +13,7 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val LOGIN_SESSION = booleanPreferencesKey("login_session")
     private val TOKEN = stringPreferencesKey("token")
     private val NAME = stringPreferencesKey("userName")
+    private val EMAIL = stringPreferencesKey("email")
 
     fun getLoginSession(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
@@ -50,14 +51,6 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun clearDataLogin() {
-        dataStore.edit { preferences ->
-            preferences.remove(LOGIN_SESSION)
-            preferences.remove(TOKEN)
-            preferences.remove(NAME)
-        }
-    }
-
     fun getUserId(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[USER_ID] ?: ""
@@ -67,6 +60,28 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     suspend fun saveUserId(userId: String) {
         dataStore.edit { preferences ->
             preferences[USER_ID] = userId
+        }
+    }
+
+    suspend fun saveEmail(email: String) {
+        dataStore.edit { preferences ->
+            preferences[EMAIL] = email
+        }
+    }
+
+    fun getEmail(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[EMAIL] ?: ""
+        }
+    }
+
+
+    suspend fun clearDataLogin() {
+        dataStore.edit { preferences ->
+            preferences.remove(LOGIN_SESSION)
+            preferences.remove(TOKEN)
+            preferences.remove(NAME)
+            preferences.remove(EMAIL)
         }
     }
 

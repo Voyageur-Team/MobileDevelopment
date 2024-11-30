@@ -34,11 +34,11 @@ class HomeFragment : Fragment() {
 
         setUserData()
 
-        binding.imageView2.setOnClickListener {
+        binding.btnSetting.setOnClickListener {
             startActivity(Intent(activity, SettingsActivity::class.java))
         }
 
-        binding.button.setOnClickListener {
+        binding.btnTrip.setOnClickListener {
             startActivity(Intent(activity, TripActivity::class.java))
         }
 

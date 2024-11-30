@@ -1,7 +1,9 @@
+// TripActivity.kt
 package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -26,6 +28,7 @@ class TripActivity : AppCompatActivity() {
     private var userToken: String? = null
     private var userId: String? = null
     private var userName: String? = null
+    private var userEmail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +44,6 @@ class TripActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)
-
         setupTokenObserver()
         setupObservers()
 
@@ -52,18 +54,15 @@ class TripActivity : AppCompatActivity() {
             val duration = binding.etDuration.text?.toString()?.toIntOrNull()
             val description = binding.etDeskripsi.text?.toString()?.trim()
 
-            if (validateInput(title, duration, description)) {
-                if (userToken.isNullOrEmpty()) {
-                    Toast.makeText(this, "Token tidak ditemukan, silakan login ulang.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
-                if (userId.isNullOrEmpty() || userName.isNullOrEmpty()) {
-                    Toast.makeText(this, "Data pengguna tidak ditemukan, silakan login ulang.", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (userToken.isNullOrEmpty() || userId.isNullOrEmpty() || userName.isNullOrEmpty() || userEmail.isNullOrEmpty()) {
+                Log.e("TripActivity", "Missing user data: userToken=$userToken, userId=$userId, userName=$userName, userEmail=$userEmail")
+                Toast.makeText(this, "Data user tidak ditemukan.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
+            if (validateInput(title, duration, description)) {
                 val participants = listOf(
-                    Participants(userId = userId!!, userName = userName!!)
+                    Participants(userId = userId!!, userName = userName!!, email = userEmail!!)
                 )
                 val createTrip = CreateTrip(
                     title = title!!,
@@ -75,6 +74,7 @@ class TripActivity : AppCompatActivity() {
                 tripViewModel.createTrip(createTrip, userToken!!)
             }
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -113,6 +113,10 @@ class TripActivity : AppCompatActivity() {
         pref.getUserId().asLiveData().observe(this) { id ->
             userId = id ?: ""
         }
+        pref.getEmail().asLiveData().observe(this) { email ->
+            userEmail = email ?: ""
+        }
+
         pref.getLoginSession().asLiveData().observe(this) { session ->
             if (session == false) {
                 Toast.makeText(this, "Sesi login tidak aktif.", Toast.LENGTH_SHORT).show()

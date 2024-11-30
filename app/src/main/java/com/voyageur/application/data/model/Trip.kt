@@ -16,14 +16,6 @@ data class CreateTrip(
 	val participants: List<Participants>
 )
 
-data class Participants(
-	@field:SerializedName("userId")
-	val userId: String,
-
-	@field:SerializedName("userName")
-	val userName: String
-)
-
 data class ResponseTrip(
 	@field:SerializedName("data")
 	val data: DataTrip,
@@ -59,5 +51,4 @@ data class DataTrip(
 
 	@field:SerializedName("participants")
 	val participants: List<Participants>
-
 )

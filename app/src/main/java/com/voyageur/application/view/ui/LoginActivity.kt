@@ -1,7 +1,5 @@
 package com.voyageur.application.view.ui
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -44,7 +42,6 @@ class LoginActivity : AppCompatActivity() {
         showLoading(false)
         setupSpannableString()
         setupObservers()
-//        setupAnimation()
 
         binding.btnLogin.setOnClickListener {
             binding.etEmail.clearFocus()
@@ -97,7 +94,8 @@ class LoginActivity : AppCompatActivity() {
 
     private fun setupObservers() {
         val preferences = AppPreferences.getInstance(dataStore)
-        val mainViewModel = ViewModelProvider(this, ViewModelFactory(preferences))[TokenViewModel::class.java]
+        val mainViewModel =
+            ViewModelProvider(this, ViewModelFactory(preferences))[TokenViewModel::class.java]
 
         mainViewModel.getLoginSession().observe(this) { sessionTrue ->
             if (sessionTrue) {
@@ -107,7 +105,9 @@ class LoginActivity : AppCompatActivity() {
 
         loginViewModel.isLoading.observe(this) { showLoading(it) }
         loginViewModel.message.observe(this) { response ->
-            response?.let { checkLogin(mainViewModel) }
+            response?.let {
+                checkLogin(mainViewModel)
+            }
         }
     }
 
@@ -122,6 +122,7 @@ class LoginActivity : AppCompatActivity() {
                         userLoginViewModel.saveToken(user.loginResult.token)
                         userLoginViewModel.saveName(user.loginResult.userName)
                         userLoginViewModel.saveUserId(user.loginResult.userId)
+                        userLoginViewModel.saveEmail(user.loginResult.email)
                     } else {
                         Toast.makeText(this, "Data pengguna tidak lengkap.", Toast.LENGTH_SHORT).show()
                     }
@@ -131,6 +132,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun checkAkun(): Boolean {
         return binding.etEmail.isEmailValid && binding.etPassword.isPasswordValid
@@ -152,26 +154,4 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun setupAnimation() {
-        ObjectAnimator.ofFloat(binding.logoApp, View.TRANSLATION_X, -40f, 40f).apply {
-            duration = 5000
-            repeatCount = ObjectAnimator.INFINITE
-            repeatMode = ObjectAnimator.REVERSE
-        }.start()
-
-        val messageAnimator = ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(500)
-        val emailAnimator = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
-        val passwordAnimator = ObjectAnimator.ofFloat(binding.etPassword, View.ALPHA, 1f).setDuration(500)
-        val loginButtonAnimator = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(500)
-
-        AnimatorSet().apply {
-            playSequentially(
-                messageAnimator,
-                emailAnimator,
-                passwordAnimator,
-                loginButtonAnimator
-            )
-            start()
-        }
-    }
 }
