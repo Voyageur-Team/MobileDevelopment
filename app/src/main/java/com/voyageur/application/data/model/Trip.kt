@@ -50,5 +50,22 @@ data class DataTrip(
 	val title: String,
 
 	@field:SerializedName("participants")
-	val participants: List<Participants>
+	val participants: List<Participants>,
+
+	@field:SerializedName("average_budget_range")
+	val averageBudgetRange: String? = null,
+
+	@field:SerializedName("most_common_categories")
+	val mostCommonCategories: List<String>? = null,
+
+	@field:SerializedName("trip_end_date")
+	val tripEndDate: String? = null,
+
+	@field:SerializedName("trip_start_date")
+	val tripStartDate: String? = null,
+
+	@field:SerializedName("most_common_destination")
+	val mostCommonDestination: String? = null
 )
+
+

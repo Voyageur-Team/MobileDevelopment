@@ -281,7 +281,7 @@ class MakeTripActivity : AppCompatActivity() {
 
     private fun formatDate(timestamp: Long?): String {
         timestamp?.let {
-            val format = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+            val format = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
             return format.format(java.util.Date(it))
         }
         return ""

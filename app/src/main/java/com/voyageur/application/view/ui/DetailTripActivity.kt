@@ -44,6 +44,7 @@ class DetailTripActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
                     detailTripViewModel.getSizeParticipants(tripId!!, token)
+                    detailTripViewModel.getTripDetail(tripId!!, token)
                 }
             }
         } else {
@@ -75,6 +76,15 @@ class DetailTripActivity : AppCompatActivity() {
     private fun observeViewModel() {
         detailTripViewModel.participantsCount.observe(this) { count ->
             binding.tvAnggota.text = "$count Orang"
+        }
+
+        detailTripViewModel.tripDetail.observe(this) { tripDetail ->
+            binding.tvTitle.text = tripDetail.title
+            binding.tvDescription.text = tripDetail.description
+            binding.tvCity.text = tripDetail.mostCommonDestination ?: "Belum ditentukan"
+            binding.tvBudget.text = tripDetail.averageBudgetRange ?: "Belum ditentukan"
+            binding.tvStartDate.text = tripDetail.tripStartDate ?: "Belum ditentukan"
+            binding.tvEndDate.text = tripDetail.tripEndDate ?: "Belum ditentukan"
         }
 
         detailTripViewModel.isLoading.observe(this) { isLoading ->

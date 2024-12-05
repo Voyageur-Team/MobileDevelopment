@@ -72,5 +72,4 @@ interface ApiService {
         @Body participantPreferences: DataParticipantPreferences
     ): Response<ParticipantPreferences>
 
-
 }
