@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
             android:text="Kota Tujuan Pilihan 1"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -103,32 +104,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tilTujuan2" />
 
-        <CalendarView
-            android:id="@+id/calendarView"
+        <EditText
+            android:id="@+id/datePicker"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="24dp"
+            android:drawablePadding="8dp"
+            android:padding="16dp"
+            android:hint="Pilih Tanggal"
+            android:drawableStart="@drawable/ic_calendar"
+            android:backgroundTint="#F7F7F9"
+            android:background="@drawable/trip_shape"
+            android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView42" />
-
         <TextView
             android:id="@+id/textView43"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
-            android:text="Masukkan budget mu"
+            android:layout_marginTop="16dp"
+            android:text="Budget Minimal Kamu"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/calendarView" />
+            app:layout_constraintTop_toBottomOf="@+id/datePicker" />
 
         <EditText
-            android:id="@+id/etBudget"
+            android:id="@+id/budgetMin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -151,14 +159,45 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
-            android:text="Masukkan preferensi mu"
+            android:text="Budget Maksimal Kamu"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etBudget" />
+            app:layout_constraintTop_toBottomOf="@+id/budgetMin" />
 
         <EditText
-            android:id="@+id/etPreferensi"
+            android:id="@+id/budgetMax"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/trip_shape"
+            android:backgroundTint="#F7F7F9"
+            android:drawableStart="@drawable/moneybag_black"
+            android:drawablePadding="8dp"
+            android:inputType="text"
+            android:padding="16dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView45" />
+
+        <TextView
+            android:id="@+id/textView47"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="Preferensi Kamu"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/budgetMax" />
+
+        <EditText
+            android:id="@+id/preferenceCategory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -167,40 +206,52 @@
             android:background="@drawable/trip_shape"
             android:backgroundTint="#F7F7F9"
             android:drawablePadding="8dp"
-            android:inputType="text"
             android:padding="16dp"
             android:textSize="14sp"
+            android:inputType="none"
+            android:focusable="false"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView45" />
+            app:layout_constraintTop_toBottomOf="@+id/textView47" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/btnSimpan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
             android:backgroundTint="@color/colorPrimary"
             android:paddingVertical="16dp"
             android:text="Simpan"
             android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etPreferensi" />
+            app:layout_constraintTop_toBottomOf="@+id/rvPreferences" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/etBudget"
+            app:layout_constraintBottom_toTopOf="@+id/budgetMin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvPreferences"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preferenceCategory" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

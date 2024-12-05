@@ -21,6 +21,7 @@ class DetailTripActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailTripBinding
     private lateinit var pref: AppPreferences
     private val detailTripViewModel: DetailTripViewModel by viewModels()
+    private var tripId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,19 +33,17 @@ class DetailTripActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
         supportActionBar?.title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)
-
-        val tripId = intent.getStringExtra("TRIP_ID")
+        tripId = intent.getStringExtra("TRIP_ID")
 
         if (tripId != null) {
             observeViewModel()
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
-                    detailTripViewModel.getSizeParticipants(tripId, token)
+                    detailTripViewModel.getSizeParticipants(tripId!!, token)
                 }
             }
         } else {
@@ -57,7 +56,9 @@ class DetailTripActivity : AppCompatActivity() {
         }
 
         binding.makeTrip.setOnClickListener {
-            startActivity(Intent(this, MakeTripActivity::class.java))
+            val intent = Intent(this, MakeTripActivity::class.java)
+            intent.putExtra("TRIP_ID", tripId)
+            startActivity(intent)
         }
     }
 

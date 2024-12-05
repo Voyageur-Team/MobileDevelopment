@@ -4,6 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.voyageur.application.data.model.Cities
+import com.voyageur.application.data.model.DataParticipantPreferences
+import com.voyageur.application.data.model.Preferences
 import com.voyageur.application.data.network.ApiConfig
 import kotlinx.coroutines.launch
 
@@ -11,6 +13,9 @@ class MakeTripViewModel : ViewModel() {
 
     private val _cities = MutableLiveData<List<Cities>>()
     val cities: MutableLiveData<List<Cities>> = _cities
+
+    private val _preferences = MutableLiveData<List<Preferences>>()
+    val preferences: MutableLiveData<List<Preferences>> = _preferences
 
     private val _isError = MutableLiveData<Boolean>()
     val isError: MutableLiveData<Boolean> = _isError
@@ -38,6 +43,57 @@ class MakeTripViewModel : ViewModel() {
                 _cities.value = emptyList()
                 _isError.value = true
                 _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getAllPreferences(token: String){
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).getAllPreferences()
+                if (response.isSuccessful && response.body() != null) {
+                    _preferences.value = response.body()!!.data
+                    _isError.value = false
+                    _message.value = "Preferences fetched successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _preferences.value = emptyList()
+                _isError.value = true
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun postParticipantPreferences(
+        token: String,
+        tripId: String,
+        participantId: String,
+        participantPreferences: DataParticipantPreferences
+    ) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).addParticipantPreferences(
+                    tripId, participantId, participantPreferences
+                )
+                if (response.isSuccessful && response.body() != null) {
+                    _isError.value = false
+                    _message.value = "Participant preferences added successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to add participant preferences: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }

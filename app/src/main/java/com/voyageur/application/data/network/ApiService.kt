@@ -1,7 +1,9 @@
 package com.voyageur.application.data.network
 
 import com.voyageur.application.data.model.CreateTrip
+import com.voyageur.application.data.model.DataParticipantPreferences
 import com.voyageur.application.data.model.LoginDataAccount
+import com.voyageur.application.data.model.ParticipantPreferences
 import com.voyageur.application.data.model.Participants
 import com.voyageur.application.data.model.RegisterDataAccount
 import com.voyageur.application.data.model.ResponseCities
@@ -27,7 +29,7 @@ interface ApiService {
     suspend fun login(@Body requestLogin: LoginDataAccount): ResponseLogin
 
     @GET("/preferences")
-    fun getAllPreferences() : Response<ResponsePreferences>
+    suspend fun getAllPreferences() : Response<ResponsePreferences>
 
     @GET("/city")
     suspend fun getAllCities() : Response<ResponseCities>
@@ -62,5 +64,13 @@ interface ApiService {
         @Path("tripId") tripId: String,
         @Body addParticipant: Participants
     ): Response<ResponseParticipants>
+
+    @POST("/trips/{tripId}/participants/{participantId}/preferences")
+    suspend fun addParticipantPreferences(
+        @Path("tripId") tripId: String,
+        @Path("participantId") participantId: String,
+        @Body participantPreferences: DataParticipantPreferences
+    ): Response<ParticipantPreferences>
+
 
 }

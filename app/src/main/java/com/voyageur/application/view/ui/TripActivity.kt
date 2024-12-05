@@ -3,7 +3,6 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -55,7 +54,6 @@ class TripActivity : AppCompatActivity() {
             val description = binding.etDeskripsi.text?.toString()?.trim()
 
             if (userToken.isNullOrEmpty() || userId.isNullOrEmpty() || userName.isNullOrEmpty() || userEmail.isNullOrEmpty()) {
-                Log.e("TripActivity", "Missing user data: userToken=$userToken, userId=$userId, userName=$userName, userEmail=$userEmail")
                 Toast.makeText(this, "Data user tidak ditemukan.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }

@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
-    id("kotlin-kapt")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.google.gms.google.services)
 }
@@ -32,11 +31,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -46,7 +45,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -68,33 +66,33 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.activity.ktx)
 
-    //room
+    // Room
     implementation(libs.androidx.room.runtime)
     ksp(libs.room.compiler)
 
-    //retrofit
+    // Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
 
-    //coroutine support
+    // Coroutine support
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.room.ktx)
 
-    //glide
+    // Glide
     implementation(libs.glide)
     implementation(libs.compressor)
 
-    //paging 3
+    // Paging 3
     implementation(libs.androidx.paging.runtime.ktx)
 
-    //testing
-    androidTestImplementation(libs.androidx.core.testing) //InstantTaskExecutorRule
-    androidTestImplementation(libs.kotlinx.coroutines.test) //TestDispatcher
+    // Testing
+    androidTestImplementation(libs.androidx.core.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 
-    testImplementation(libs.androidx.core.testing) // InstantTaskExecutorRule
-    testImplementation(libs.kotlinx.coroutines.test) //TestDispatcher
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
 
@@ -107,4 +105,5 @@ dependencies {
     implementation(libs.googleid)
 
     implementation(libs.circularimageview)
+
 }

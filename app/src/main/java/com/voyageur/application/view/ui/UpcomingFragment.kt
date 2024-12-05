@@ -37,7 +37,7 @@ class UpcomingFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = TripAdapter { trip ->
             val intent = Intent(context, InviteActivity::class.java)
-            intent.putExtra("TRIP_ID", trip.id) // Kirim ID trip
+            intent.putExtra("TRIP_ID", trip.id)
             intent.putExtra("TRIP_TITLE", trip.title)
             startActivity(intent)
         }
@@ -47,6 +47,15 @@ class UpcomingFragment : Fragment() {
             refreshTrips()
         }
 
+        observeViewModel(adapter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTrips()
+    }
+
+    private fun observeViewModel(adapter: TripAdapter) {
         lifecycleScope.launch {
             val userId = pref.getUserId().first()
             val token = pref.getToken().first()
@@ -54,7 +63,12 @@ class UpcomingFragment : Fragment() {
         }
 
         plansViewModel.trips.observe(viewLifecycleOwner) { trips ->
-            adapter.submitList(trips)
+            if (trips.isEmpty()) {
+                binding.textViewNoData.visibility = View.VISIBLE
+            } else {
+                binding.textViewNoData.visibility = View.GONE
+                adapter.submitList(trips)
+            }
         }
 
         plansViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
@@ -67,9 +81,8 @@ class UpcomingFragment : Fragment() {
             val userId = pref.getUserId().first()
             val token = pref.getToken().first()
             plansViewModel.getAllTripsUserId(userId, token)
+            binding.swipeRefreshLayout.isRefreshing = false
         }
-
-        binding.swipeRefreshLayout.isRefreshing = false
     }
 
     override fun onDestroyView() {
@@ -77,4 +90,3 @@ class UpcomingFragment : Fragment() {
         _binding = null
     }
 }
-

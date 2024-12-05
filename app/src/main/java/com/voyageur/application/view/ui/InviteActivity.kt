@@ -84,6 +84,11 @@ class InviteActivity : AppCompatActivity() {
             }
         }
 
+
+        binding.swipeRefreshLayoutParticipants.setOnRefreshListener {
+            refreshParticipants()
+        }
+
         binding.btnLanjut.setOnClickListener {
             val intent = Intent(this, DetailTripActivity::class.java)
             intent.putExtra("TRIP_ID", tripId)
@@ -146,6 +151,19 @@ class InviteActivity : AppCompatActivity() {
                 adapterUsers.updateUsers(users)
                 users.forEach { user ->
                     Log.d("InviteActivity", "User data: userId=${user.userId}, userName=${user.userName}, email=${user.email}")
+                }
+            }
+        }
+    }
+
+    private fun refreshParticipants() {
+        lifecycleScope.launch {
+            pref.getToken().collect() { token ->
+                if (token.isNotEmpty()) {
+                    tripId?.let {
+                        inviteViewModel.fetchTripDetail(it, token)
+                        binding.swipeRefreshLayoutParticipants.isRefreshing = false
+                    }
                 }
             }
         }
