@@ -68,4 +68,67 @@ class DetailTripViewModel: ViewModel() {
             }
         }
     }
+
+    fun postMostPreferences(token: String, tripId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).postMostPreferences(tripId)
+                if (response.isSuccessful && response.body() != null) {
+                    _isError.value = false
+                    _message.value = "Most preferences posted successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to post data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun postRecommendations(token: String, tripId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).postRecommendations(tripId)
+                if (response.isSuccessful && response.body() != null) {
+                    _isError.value = false
+                    _message.value = "Recommendations posted successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to post data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getRecommendation(tripId: String, token: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).getRecommendations(tripId)
+                if (response.isSuccessful && response.body() != null) {
+                    _isError.value = false
+                    _message.value = "Recommendation fetched successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

@@ -15,6 +15,7 @@ import com.voyageur.application.R
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityDetailTripBinding
 import com.voyageur.application.viewmodel.DetailTripViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class DetailTripActivity : AppCompatActivity() {
@@ -39,21 +40,53 @@ class DetailTripActivity : AppCompatActivity() {
         pref = AppPreferences.getInstance(applicationContext.dataStore)
         tripId = intent.getStringExtra("TRIP_ID")
 
+        setupUI()
+        observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
         if (tripId != null) {
-            observeViewModel()
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
-                    detailTripViewModel.getSizeParticipants(tripId!!, token)
-                    detailTripViewModel.getTripDetail(tripId!!, token)
+                    if (token.isNotEmpty()) {
+                        detailTripViewModel.getSizeParticipants(tripId!!, token)
+                        detailTripViewModel.getTripDetail(tripId!!, token)
+                    }
                 }
             }
         } else {
             Toast.makeText(this, "Trip ID not found", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    private fun setupUI() {
+        binding.btnPrefences.setOnClickListener {
+            lifecycleScope.launch {
+                val token = pref.getToken().firstOrNull()
+                if (token != null && tripId != null) {
+                    detailTripViewModel.postMostPreferences(token, tripId!!)
+                    detailTripViewModel.postRecommendations(token, tripId!!)
+                } else {
+                    Toast.makeText(this@DetailTripActivity, "Token or Trip ID is missing", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
 
         binding.btnRekomendasi.setOnClickListener {
-            startActivity(Intent(this, VotingActivity::class.java))
+            lifecycleScope.launch {
+                val token = pref.getToken().firstOrNull()
+                if (token != null && tripId != null) {
+                    Toast.makeText(this@DetailTripActivity, "Recommendations fetched successfully!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@DetailTripActivity, "Token or Trip ID is missing", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            val intent = Intent(this, VotingActivity::class.java)
+            intent.putExtra("TRIP_ID", tripId)
+            startActivity(intent)
         }
 
         binding.makeTrip.setOnClickListener {
@@ -85,6 +118,7 @@ class DetailTripActivity : AppCompatActivity() {
             binding.tvBudget.text = tripDetail.averageBudgetRange ?: "Belum ditentukan"
             binding.tvStartDate.text = tripDetail.tripStartDate ?: "Belum ditentukan"
             binding.tvEndDate.text = tripDetail.tripEndDate ?: "Belum ditentukan"
+            binding.progressParticipants.text = tripDetail.participants.size.toString()
         }
 
         detailTripViewModel.isLoading.observe(this) { isLoading ->
@@ -93,9 +127,8 @@ class DetailTripActivity : AppCompatActivity() {
 
         detailTripViewModel.isError.observe(this) { isError ->
             if (isError) {
-                binding.tvAnggota.text = detailTripViewModel.message.value
+                Toast.makeText(this, detailTripViewModel.message.value, Toast.LENGTH_SHORT).show()
             }
         }
     }
 }
-

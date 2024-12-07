@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.voyageur.application.data.model.DataTrip
 import com.voyageur.application.data.model.DataUserEmail
 import com.voyageur.application.data.model.Participants
 import com.voyageur.application.data.model.ResponseParticipants
@@ -28,6 +29,9 @@ class InviteViewModel : ViewModel() {
 
     private val _addParticipant = MutableLiveData<ResponseParticipants>()
     val addParticipant: LiveData<ResponseParticipants> = _addParticipant
+
+    private val _tripDetail = MutableLiveData<DataTrip>()
+    val tripDetail: LiveData<DataTrip> get() = _tripDetail
 
 
     fun fetchTripDetail(tripId: String, token: String) {

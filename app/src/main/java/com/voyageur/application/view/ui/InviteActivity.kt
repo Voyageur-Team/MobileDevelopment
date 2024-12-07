@@ -33,6 +33,7 @@ class InviteActivity : AppCompatActivity() {
     private lateinit var pref: AppPreferences
 
     private var tripId: String? = null
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,17 +53,10 @@ class InviteActivity : AppCompatActivity() {
 
         tripId = intent.getStringExtra("TRIP_ID")
         if (tripId != null) {
-            lifecycleScope.launch {
-                pref.getToken().collect { token ->
-                    if (token.isNotEmpty()) {
-                        inviteViewModel.fetchTripDetail(tripId!!, token)
-                        setupRecyclerViewParticipants()
-                        setupRecyclerViewUsers()
-                        observeViewModelParticipants()
-                        observeViewModelUsers()
-                    }
-                }
-            }
+            setupRecyclerViewParticipants()
+            setupRecyclerViewUsers()
+            observeViewModelParticipants()
+            observeViewModelUsers()
         } else {
             finish()
         }
@@ -84,7 +78,6 @@ class InviteActivity : AppCompatActivity() {
             }
         }
 
-
         binding.swipeRefreshLayoutParticipants.setOnRefreshListener {
             refreshParticipants()
         }
@@ -93,6 +86,25 @@ class InviteActivity : AppCompatActivity() {
             val intent = Intent(this, DetailTripActivity::class.java)
             intent.putExtra("TRIP_ID", tripId)
             startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
+    }
+
+    private fun refreshData() {
+        if (tripId != null) {
+            lifecycleScope.launch {
+                pref.getToken().collect { token ->
+                    if (token.isNotEmpty()) {
+                        inviteViewModel.fetchTripDetail(tripId!!, token)
+                    }
+                }
+            }
+        } else {
+            finish()
         }
     }
 

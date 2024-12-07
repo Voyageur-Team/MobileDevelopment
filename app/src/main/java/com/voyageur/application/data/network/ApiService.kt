@@ -2,11 +2,15 @@ package com.voyageur.application.data.network
 
 import com.voyageur.application.data.model.CreateTrip
 import com.voyageur.application.data.model.DataParticipantPreferences
+import com.voyageur.application.data.model.GetRecommendation
 import com.voyageur.application.data.model.LoginDataAccount
 import com.voyageur.application.data.model.ParticipantPreferences
 import com.voyageur.application.data.model.Participants
+import com.voyageur.application.data.model.PostMostPreferences
+import com.voyageur.application.data.model.PostRecommendations
 import com.voyageur.application.data.model.RegisterDataAccount
 import com.voyageur.application.data.model.ResponseCities
+import com.voyageur.application.data.model.ResponseItenerary
 import com.voyageur.application.data.model.ResponseLogin
 import com.voyageur.application.data.model.ResponseParticipants
 import com.voyageur.application.data.model.ResponsePreferences
@@ -71,5 +75,26 @@ interface ApiService {
         @Path("participantId") participantId: String,
         @Body participantPreferences: DataParticipantPreferences
     ): Response<ParticipantPreferences>
+
+    @POST("recommendations/preferences/{tripId}")
+    suspend fun postMostPreferences(
+        @Path("tripId") tripId: String
+    ): Response<PostMostPreferences>
+
+    @POST("recommendations/trip/{tripId}/recommendations")
+    suspend fun postRecommendations(
+        @Path("tripId") tripId: String
+    ): Response<PostRecommendations>
+
+    @GET("recommendations/{tripId}")
+    suspend fun getRecommendations(
+        @Path("tripId") tripId: String
+    ): Response<GetRecommendation>
+
+    @GET("recommendations/{tripId}/{iteneraryId}")
+    suspend fun getIteneraries(
+        @Path("tripId") tripId: String,
+        @Path("iteneraryId") iteneraryId: String
+    ): Response<ResponseItenerary>
 
 }
