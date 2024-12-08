@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.voyageur.application.data.adapter.TripAdapter
+import com.voyageur.application.data.model.DataItem
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.FragmentUpcomingBinding
 import com.voyageur.application.viewmodel.PlansViewModel
@@ -39,10 +40,7 @@ class UpcomingFragment : Fragment() {
 
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = TripAdapter { trip ->
-            val intent = Intent(context, InviteActivity::class.java)
-            intent.putExtra("TRIP_ID", trip.id)
-            intent.putExtra("TRIP_TITLE", trip.title)
-            startActivity(intent)
+            checkUserIdAndNavigate(trip)
         }
         binding.recyclerView.adapter = adapter
 
@@ -83,6 +81,24 @@ class UpcomingFragment : Fragment() {
 
         plansViewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+    }
+
+    private fun checkUserIdAndNavigate(trip: DataItem) {
+        lifecycleScope.launch {
+            val userId = pref.getUserId().first()
+            val createdBy = trip.createdBy
+
+            if (userId == createdBy) {
+                val intent = Intent(context, InviteActivity::class.java)
+                intent.putExtra("TRIP_ID", trip.id)
+                intent.putExtra("TRIP_TITLE", trip.title)
+                startActivity(intent)
+            } else {
+                val intent = Intent(context, DetailTripActivity::class.java)
+                intent.putExtra("TRIP_ID", trip.id)
+                startActivity(intent)
+            }
         }
     }
 
