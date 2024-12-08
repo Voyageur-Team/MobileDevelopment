@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class ResponseItenerary(
 
-	@field:SerializedName("data")
-	val data: DataItenerary,
+	@field:SerializedName("recommendations")
+	val recommendations: DataItenerary,
 
 	@field:SerializedName("tripId")
 	val tripId: String,
@@ -26,7 +26,7 @@ data class DataItenerary(
 	val itineraryName: String,
 
 	@field:SerializedName("itinerary")
-	val itinerary: List<ItineraryItem>
+	val itinerary: List<IteneraryItem>
 )
 
 data class IteneraryItem(

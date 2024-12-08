@@ -18,5 +18,9 @@ class Formatted {
             val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             return dateFormat.format(date)
         }
+
+        fun formatRating(rating: Double): String {
+            return String.format("%.1f", rating / 10)
+        }
     }
 }

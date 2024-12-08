@@ -20,6 +20,7 @@ import com.voyageur.application.data.model.ResponseUserEmail
 import com.voyageur.application.data.model.UserTrip
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -96,5 +97,11 @@ interface ApiService {
         @Path("tripId") tripId: String,
         @Path("iteneraryId") iteneraryId: String
     ): Response<ResponseItenerary>
+
+    @DELETE("trips/{tripId}/participants/{participantId}")
+    suspend fun deleteParticipant(
+        @Path("tripId") tripId: String,
+        @Path("participantId") participantId: String
+    ): Response<ResponseParticipants>
 
 }

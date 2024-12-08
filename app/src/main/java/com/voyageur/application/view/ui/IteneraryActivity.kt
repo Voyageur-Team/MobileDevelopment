@@ -13,7 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.voyageur.application.R
-import com.voyageur.application.data.adapter.ItineraryAdapter
+import com.voyageur.application.data.adapter.IteneraryAdapter
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityIteneraryBinding
 import com.voyageur.application.viewmodel.IteneraryViewModel
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 class IteneraryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityIteneraryBinding
-    private lateinit var adapter: ItineraryAdapter
+    private lateinit var adapter: IteneraryAdapter
     private lateinit var itineraryId: String
     private lateinit var tripId: String
     private lateinit var pref: AppPreferences
@@ -53,7 +53,7 @@ class IteneraryActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        adapter = ItineraryAdapter(emptyList())
+        adapter = IteneraryAdapter(emptyList())
         binding.rvItineraries.layoutManager = LinearLayoutManager(this)
         binding.rvItineraries.adapter = adapter
     }
@@ -81,13 +81,11 @@ class IteneraryActivity : AppCompatActivity() {
             showLoading(isLoading)
         }
 
-        itineraryViewModel.itineraries.observe(this) { itineraries ->
+        itineraryViewModel.iteneraries.observe(this) { itineraries ->
             if (itineraries.isNullOrEmpty()) {
-                Log.d("ItineraryActivity", "Received empty itineraries list")
                 binding.tvNoItineraries.visibility = View.VISIBLE
                 binding.rvItineraries.visibility = View.GONE
             } else {
-                Log.d("ItineraryActivity", "Received itineraries list with size: ${itineraries.size}")
                 binding.tvNoItineraries.visibility = View.GONE
                 binding.rvItineraries.visibility = View.VISIBLE
                 adapter.updateData(itineraries)

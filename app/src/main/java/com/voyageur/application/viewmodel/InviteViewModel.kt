@@ -97,4 +97,22 @@ class InviteViewModel : ViewModel() {
             }
         }
     }
+
+    fun deleteParticipant(tripId: String, participantId: String, token: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).deleteParticipant(tripId, participantId)
+                if (response.isSuccessful && response.body() != null) {
+                    _message.value = "Participant deleted successfully!"
+                } else {
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _message.value = "Failed to delete participant: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

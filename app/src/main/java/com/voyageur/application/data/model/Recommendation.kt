@@ -94,7 +94,6 @@ data class ItineraryItem(
 	val category: String
 )
 
-
 //Get Rekomendasi
 data class GetRecommendation(
 

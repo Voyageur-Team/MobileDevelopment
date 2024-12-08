@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.voyageur.application.R
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityDetailTripBinding
+import com.voyageur.application.view.utils.Formatted.Companion.formatRupiah
 import com.voyageur.application.viewmodel.DetailTripViewModel
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -69,7 +70,7 @@ class DetailTripActivity : AppCompatActivity() {
                     detailTripViewModel.postMostPreferences(token, tripId!!)
                     detailTripViewModel.postRecommendations(token, tripId!!)
                 } else {
-                    Toast.makeText(this@DetailTripActivity, "Token or Trip ID is missing", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -78,9 +79,8 @@ class DetailTripActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 val token = pref.getToken().firstOrNull()
                 if (token != null && tripId != null) {
-                    Toast.makeText(this@DetailTripActivity, "Recommendations fetched successfully!", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@DetailTripActivity, "Token or Trip ID is missing", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -115,7 +115,8 @@ class DetailTripActivity : AppCompatActivity() {
             binding.tvTitle.text = tripDetail.title
             binding.tvDescription.text = tripDetail.description
             binding.tvCity.text = tripDetail.mostCommonDestination ?: "Belum ditentukan"
-            binding.tvBudget.text = tripDetail.averageBudgetRange ?: "Belum ditentukan"
+            binding.tvBudget.text = tripDetail.averageBudgetRange?.let { formatRupiah(it.toDouble()) }
+                ?: "Belum ditentukan"
             binding.tvStartDate.text = tripDetail.tripStartDate ?: "Belum ditentukan"
             binding.tvEndDate.text = tripDetail.tripEndDate ?: "Belum ditentukan"
             binding.progressParticipants.text = tripDetail.participants.size.toString()

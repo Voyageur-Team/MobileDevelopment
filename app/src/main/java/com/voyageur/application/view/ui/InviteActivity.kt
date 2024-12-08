@@ -2,7 +2,6 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -119,7 +118,17 @@ class InviteActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerViewParticipants() {
-        adapterParticipants = InviteAdapterParticipants(emptyList())
+        adapterParticipants = InviteAdapterParticipants(emptyList()) { userId, userName ->
+            tripId?.let { id ->
+                lifecycleScope.launch {
+                    pref.getToken().collect { token ->
+                        if (token.isNotEmpty()) {
+                            deleteParticipant(id, userId, token)
+                        }
+                    }
+                }
+            }
+        }
         binding.rvAnggota.layoutManager = LinearLayoutManager(this)
         binding.rvAnggota.adapter = adapterParticipants
     }
@@ -162,7 +171,6 @@ class InviteActivity : AppCompatActivity() {
             } else {
                 adapterUsers.updateUsers(users)
                 users.forEach { user ->
-                    Log.d("InviteActivity", "User data: userId=${user.userId}, userName=${user.userName}, email=${user.email}")
                 }
             }
         }
@@ -170,7 +178,7 @@ class InviteActivity : AppCompatActivity() {
 
     private fun refreshParticipants() {
         lifecycleScope.launch {
-            pref.getToken().collect() { token ->
+            pref.getToken().collect { token ->
                 if (token.isNotEmpty()) {
                     tripId?.let {
                         inviteViewModel.fetchTripDetail(it, token)
@@ -180,6 +188,35 @@ class InviteActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun deleteParticipant(tripId: String, participantId: String, token: String) {
+        val dialogBuilder = AlertDialog.Builder(this)
+        dialogBuilder.setTitle("Delete Participant")
+        dialogBuilder.setMessage("Are you sure you want to delete this participant?")
+
+        dialogBuilder.setPositiveButton("Yes") { _, _ ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    inviteViewModel.deleteParticipant(tripId, participantId, token)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@InviteActivity, "Participant deleted successfully", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@InviteActivity, "Failed to delete participant: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+
+        dialogBuilder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = dialogBuilder.create()
+        dialog.show()
+    }
+
 
     private fun addParticipantToTrip(tripId: String, userId: String?, userName: String?, email: String?, token: String) {
         val dialogBuilder = AlertDialog.Builder(this)
@@ -195,14 +232,14 @@ class InviteActivity : AppCompatActivity() {
                     return@launch
                 }
                 val participant = Participants(userName, userId, email)
-                inviteViewModel.addParticipantsToTrip(tripId, participant, token)
-
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@InviteActivity, "Participant added successfully", Toast.LENGTH_SHORT).show()
-                    inviteViewModel.fetchTripDetail(tripId, token)
-
-                    inviteViewModel.participants.observe(this@InviteActivity) { updatedParticipants ->
-                        adapterParticipants.updateParticipants(updatedParticipants)
+                try {
+                    inviteViewModel.addParticipantsToTrip(tripId, participant, token)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@InviteActivity, "Participant added successfully", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@InviteActivity, "Failed to add participant: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -215,4 +252,5 @@ class InviteActivity : AppCompatActivity() {
         val dialog = dialogBuilder.create()
         dialog.show()
     }
+
 }
