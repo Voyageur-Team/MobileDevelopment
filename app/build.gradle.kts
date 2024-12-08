@@ -5,6 +5,7 @@ plugins {
     id("kotlin-parcelize")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
     alias(libs.plugins.google.gms.google.services)
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -105,5 +106,7 @@ dependencies {
     implementation(libs.googleid)
 
     implementation(libs.circularimageview)
+
+
 
 }

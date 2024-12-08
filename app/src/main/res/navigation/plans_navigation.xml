@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/upcomingFragment">
+
+    <fragment
+        android:id="@+id/upcomingFragment"
+        android:name="com.voyageur.application.view.ui.UpcomingFragment"
+        android:label="Upcoming Fragment"
+        tools:layout="@layout/fragment_upcoming" >
+        <action
+            android:id="@+id/action_upcomingFragment_to_ongoingFragment"
+            app:destination="@id/ongoingFragment" />
+        <action
+            android:id="@+id/action_upcomingFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ongoingFragment"
+        android:name="com.voyageur.application.view.ui.OngoingFragment"
+        android:label="Ongoing Fragment"
+        tools:layout="@layout/fragment_ongoing" >
+        <action
+            android:id="@+id/action_ongoingFragment_to_upcomingFragment"
+            app:destination="@id/upcomingFragment" />
+        <action
+            android:id="@+id/action_ongoingFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.voyageur.application.view.ui.HistoryFragment"
+        android:label="History Fragment"
+        tools:layout="@layout/fragment_history" >
+        <action
+            android:id="@+id/action_historyFragment_to_upcomingFragment"
+            app:destination="@id/upcomingFragment" />
+        <action
+            android:id="@+id/action_historyFragment_to_ongoingFragment"
+            app:destination="@id/ongoingFragment" />
+    </fragment>
+
+</navigation>

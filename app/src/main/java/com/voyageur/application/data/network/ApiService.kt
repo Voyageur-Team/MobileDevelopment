@@ -31,7 +31,7 @@ interface ApiService {
     suspend fun register(@Body requestRegister: RegisterDataAccount): ResponseRegister
 
     @POST("auth/login")
-    suspend fun login(@Body requestLogin: LoginDataAccount): ResponseLogin
+    suspend fun login(@Body requestLogin: LoginDataAccount): Response<ResponseLogin>
 
     @GET("/preferences")
     suspend fun getAllPreferences() : Response<ResponsePreferences>

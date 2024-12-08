@@ -33,6 +33,8 @@ class InviteViewModel : ViewModel() {
     private val _tripDetail = MutableLiveData<DataTrip>()
     val tripDetail: LiveData<DataTrip> get() = _tripDetail
 
+    private val _tripCreated = MutableLiveData<DataTrip>()
+    val tripCreated: LiveData<DataTrip> get() = _tripCreated
 
     fun fetchTripDetail(tripId: String, token: String) {
         viewModelScope.launch {
@@ -40,15 +42,16 @@ class InviteViewModel : ViewModel() {
             try {
                 val response = ApiConfig.getApiService(token).getTripDetail(tripId)
                 if (response.isSuccessful && response.body() != null) {
-                    _participants.value = response.body()!!.data.participants
+                    val tripData = response.body()!!.data
+                    _participants.value = tripData.participants
+                    _tripCreated.value = tripData
                     _isError.value = false
                 } else {
                     _isError.value = true
+                    _isLoading.value = false
                 }
             } catch (e: Exception) {
-                _participants.value = emptyList()
                 _isError.value = true
-            } finally {
                 _isLoading.value = false
             }
         }

@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.voyageur.application.R
@@ -88,13 +87,8 @@ class InviteActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshData()
-    }
-
     private fun refreshData() {
-        if (tripId != null) {
+        tripId?.let {
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
                     if (token.isNotEmpty()) {
@@ -102,9 +96,12 @@ class InviteActivity : AppCompatActivity() {
                     }
                 }
             }
-        } else {
-            finish()
-        }
+        } ?: finish()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshData()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -150,28 +147,18 @@ class InviteActivity : AppCompatActivity() {
     }
 
     private fun observeViewModelParticipants() {
-        inviteViewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-        }
-
         inviteViewModel.participants.observe(this) { participants ->
             adapterParticipants.updateParticipants(participants)
         }
     }
 
     private fun observeViewModelUsers() {
-        inviteViewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.isVisible = isLoading
-        }
-
         inviteViewModel.userEmail.observe(this) { users ->
             if (users.isEmpty()) {
                 adapterUsers.updateUsers(emptyList())
                 Toast.makeText(this, "No users found", Toast.LENGTH_SHORT).show()
             } else {
                 adapterUsers.updateUsers(users)
-                users.forEach { user ->
-                }
             }
         }
     }
@@ -217,7 +204,6 @@ class InviteActivity : AppCompatActivity() {
         dialog.show()
     }
 
-
     private fun addParticipantToTrip(tripId: String, userId: String?, userName: String?, email: String?, token: String) {
         val dialogBuilder = AlertDialog.Builder(this)
         dialogBuilder.setTitle("Add Participant")
@@ -252,5 +238,4 @@ class InviteActivity : AppCompatActivity() {
         val dialog = dialogBuilder.create()
         dialog.show()
     }
-
 }

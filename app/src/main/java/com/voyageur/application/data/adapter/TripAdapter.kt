@@ -14,7 +14,7 @@ class TripAdapter(private val onItemClick: (DataItem) -> Unit) : RecyclerView.Ad
         RecyclerView.ViewHolder(binding.root) {
         fun bind(trip: DataItem) {
             binding.tvTitle.text = trip.title
-            binding.tvDescription.text = trip.description
+            binding.tvDescription.text = "${trip.duration} Hari - ${if (trip.mostCommonDestination.isNullOrEmpty()) "Belum ditentukan" else trip.mostCommonDestination}"
             binding.tvStartDate.text = if (trip.tripStartDate.isNullOrEmpty()) "Belum ditentukan" else trip.tripStartDate
             binding.tvEndDate.text = trip.tripEndDate
             binding.tvParticipants.text = "${trip.participants.size} Sudah Bergabung"

@@ -15,6 +15,9 @@ import com.voyageur.application.databinding.FragmentUpcomingBinding
 import com.voyageur.application.viewmodel.PlansViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class UpcomingFragment : Fragment() {
     private var _binding: FragmentUpcomingBinding? = null
@@ -63,11 +66,18 @@ class UpcomingFragment : Fragment() {
         }
 
         plansViewModel.trips.observe(viewLifecycleOwner) { trips ->
-            if (trips.isEmpty()) {
-                binding.textViewNoData.visibility = View.VISIBLE
+            val upcomingTrips = trips.filter { trip ->
+                val tripStartDate = parseDate(trip.tripStartDate)
+                tripStartDate?.after(Date()) == true || tripStartDate == null
+            }
+
+            if (upcomingTrips.isEmpty()) {
+                binding.tvNoData.visibility = View.VISIBLE
+                binding.recyclerView.visibility = View.GONE
             } else {
-                binding.textViewNoData.visibility = View.GONE
-                adapter.submitList(trips)
+                binding.tvNoData.visibility = View.GONE
+                binding.recyclerView.visibility = View.VISIBLE
+                adapter.submitList(upcomingTrips)
             }
         }
 
@@ -82,6 +92,15 @@ class UpcomingFragment : Fragment() {
             val token = pref.getToken().first()
             plansViewModel.getAllTripsUserId(userId, token)
             binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    private fun parseDate(dateString: String?): Date? {
+        return try {
+            val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            dateString?.let { format.parse(it) }
+        } catch (e: Exception) {
+            null
         }
     }
 

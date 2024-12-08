@@ -32,24 +32,29 @@ class AuthViewModel : ViewModel() {
                 _message.value = "Registrasi berhasil!"
             } catch (e: Exception) {
                 _isError.value = true
-                _message.value = e.message
+                _message.value = message.value
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun login(loginData: LoginDataAccount){
+    fun login(loginData: LoginDataAccount) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
                 val response = ApiConfig.getApiService("").login(loginData)
-                _userLogin.value = response
-                _isError.value = false
-                _message.value = "Login berhasil!"
+                if (response.isSuccessful) {
+                    _userLogin.value = response.body()
+                    _isError.value = false
+                    _message.value = "Login berhasil!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.message()
+                }
             } catch (e: Exception) {
                 _isError.value = true
-                _message.value = e.message
+                _message.value = "Terjadi kesalahan. Periksa koneksi Anda."
             } finally {
                 _isLoading.value = false
             }

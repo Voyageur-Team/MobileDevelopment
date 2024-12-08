@@ -116,6 +116,7 @@ class LoginActivity : AppCompatActivity() {
             loginViewModel.message.observe(this) { message ->
                 if (!isError) {
                     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
                     val user = loginViewModel.userLogin.value
                     if (user != null) {
                         userLoginViewModel.saveLoginSession(true)
@@ -123,6 +124,7 @@ class LoginActivity : AppCompatActivity() {
                         userLoginViewModel.saveName(user.loginResult.userName)
                         userLoginViewModel.saveUserId(user.loginResult.userId)
                         userLoginViewModel.saveEmail(user.loginResult.email)
+                        navigateToApp()
                     } else {
                         Toast.makeText(this, "Data pengguna tidak lengkap.", Toast.LENGTH_SHORT).show()
                     }
@@ -132,7 +134,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun checkAkun(): Boolean {
         return binding.etEmail.isEmailValid && binding.etPassword.isPasswordValid
