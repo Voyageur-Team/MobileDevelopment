@@ -36,7 +36,6 @@ data class DataMostRecommendation(
 	val intermediateBudget: Int
 )
 
-//Hasil Rekomendasi
 data class PostRecommendations(
 
 	@field:SerializedName("idRecommendation")

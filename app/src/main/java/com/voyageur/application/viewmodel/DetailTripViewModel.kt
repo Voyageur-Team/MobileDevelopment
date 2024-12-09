@@ -22,6 +22,12 @@ class DetailTripViewModel: ViewModel() {
     private val _participantsCount = MutableLiveData<Int>()
     val participantsCount: MutableLiveData<Int> = _participantsCount
 
+    private val _completedParticipants = MutableLiveData<Int>()
+    val completedParticipants: LiveData<Int> = _completedParticipants
+
+    private val _totalParticipants = MutableLiveData<Int>()
+    val totalParticipants: LiveData<Int> = _totalParticipants
+
     private val _tripDetail = MutableLiveData<DataTrip>()
     val tripDetail: LiveData<DataTrip> get() = _tripDetail
 
@@ -30,6 +36,7 @@ class DetailTripViewModel: ViewModel() {
 
     private val _iteneraryUser = MutableLiveData<DataVote>()
     val iteneraryUser: LiveData<DataVote> get() = _iteneraryUser
+
 
     fun getSizeParticipants(tripId: String, token: String) {
         viewModelScope.launch {
@@ -40,14 +47,11 @@ class DetailTripViewModel: ViewModel() {
                     val participants = response.body()?.data?.size ?: 0
                     _participantsCount.value = participants
                     _isError.value = false
-                    _message.value = "Participants fetched successfully!"
                 } else {
                     _isError.value = true
-                    _message.value = response.errorBody()?.string() ?: "An error occurred."
                 }
             } catch (e: Exception) {
                 _isError.value = true
-                _message.value = "Failed to fetch data: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
@@ -81,16 +85,9 @@ class DetailTripViewModel: ViewModel() {
             _isLoading.value = true
             try {
                 val response = ApiConfig.getApiService(token).postMostPreferences(tripId)
-                if (response.isSuccessful && response.body() != null) {
-                    _isError.value = false
-                    _message.value = "Most preferences posted successfully!"
-                } else {
-                    _isError.value = true
-                    _message.value = response.errorBody()?.string() ?: "An error occurred."
-                }
+                _isError.value = !(response.isSuccessful && response.body() != null)
             } catch (e: Exception) {
                 _isError.value = true
-                _message.value = "Failed to post data: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
@@ -102,16 +99,9 @@ class DetailTripViewModel: ViewModel() {
             _isLoading.value = true
             try {
                 val response = ApiConfig.getApiService(token).postRecommendations(tripId)
-                if (response.isSuccessful && response.body() != null) {
-                    _isError.value = false
-                    _message.value = "Recommendations posted successfully!"
-                } else {
-                    _isError.value = true
-                    _message.value = response.errorBody()?.string() ?: "An error occurred."
-                }
+                _isError.value = !(response.isSuccessful && response.body() != null)
             } catch (e: Exception) {
                 _isError.value = true
-                _message.value = "Failed to post data: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
             }
@@ -126,10 +116,8 @@ class DetailTripViewModel: ViewModel() {
                 if (response.isSuccessful && response.body() != null) {
                     _userVote.value = response.body()?.error
                     _isError.value = false
-                    _message.value = "Vote fetched successfully!"
                 } else {
                     _isError.value = true
-                    _message.value = response.errorBody()?.string() ?: "An error occurred."
                 }
             } catch (e: Exception) {
                 _isError.value = true
@@ -156,6 +144,27 @@ class DetailTripViewModel: ViewModel() {
             } catch (e: Exception) {
                 _isError.value = true
                 _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun calculateParticipantProgress(token: String, tripId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).getParticipantProgress(tripId)
+                if (response.isSuccessful && response.body() != null) {
+                    val progressData = response.body()?.data
+                    _completedParticipants.value = progressData?.completedParticipants ?: 0
+                    _totalParticipants.value = progressData?.totalParticipants ?: 0
+                    _isError.value = response.body()?.error ?: false
+                } else {
+                    _isError.value = true
+                }
+            } catch (e: Exception) {
+                _isError.value = true
             } finally {
                 _isLoading.value = false
             }

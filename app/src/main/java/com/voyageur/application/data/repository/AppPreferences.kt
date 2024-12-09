@@ -14,6 +14,12 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
     private val TOKEN = stringPreferencesKey("token")
     private val NAME = stringPreferencesKey("userName")
     private val EMAIL = stringPreferencesKey("email")
+    private val TUJUAN1 = stringPreferencesKey("tujuan1")
+    private val TUJUAN2 = stringPreferencesKey("tujuan2")
+    private val DATE_RANGE = stringPreferencesKey("date_range")
+    private val BUDGET_MIN = stringPreferencesKey("budget_min")
+    private val BUDGET_MAX = stringPreferencesKey("budget_max")
+    private val SELECTED_PREFERENCES = stringPreferencesKey("selected_preferences")
 
     fun getLoginSession(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
@@ -63,18 +69,89 @@ class AppPreferences private constructor(private val dataStore: DataStore<Prefer
         }
     }
 
-    suspend fun saveEmail(email: String) {
-        dataStore.edit { preferences ->
-            preferences[EMAIL] = email
-        }
-    }
-
     fun getEmail(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[EMAIL] ?: ""
         }
     }
 
+    suspend fun saveEmail(email: String) {
+        dataStore.edit { preferences ->
+            preferences[EMAIL] = email
+        }
+    }
+
+    fun getTujuan1(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[TUJUAN1] ?: ""
+        }
+    }
+
+    suspend fun saveTujuan1(tujuan1: String) {
+        dataStore.edit { preferences ->
+            preferences[TUJUAN1] = tujuan1
+        }
+    }
+
+    fun getTujuan2(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[TUJUAN2] ?: ""
+        }
+    }
+
+    suspend fun saveTujuan2(tujuan2: String) {
+        dataStore.edit { preferences ->
+            preferences[TUJUAN2] = tujuan2
+        }
+    }
+
+    fun getDateRange(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[DATE_RANGE] ?: ""
+        }
+    }
+
+    suspend fun saveDateRange(dateRange: String) {
+        dataStore.edit { preferences ->
+            preferences[DATE_RANGE] = dateRange
+        }
+    }
+
+    fun getBudgetMin(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[BUDGET_MIN] ?: ""
+        }
+    }
+
+    suspend fun saveBudgetMin(budgetMin: String) {
+        dataStore.edit { preferences ->
+            preferences[BUDGET_MIN] = budgetMin
+        }
+    }
+
+    fun getBudgetMax(): Flow<String> {
+        return dataStore.data.map { preferences ->
+            preferences[BUDGET_MAX] ?: ""
+        }
+    }
+
+    suspend fun saveBudgetMax(budgetMax: String) {
+        dataStore.edit { preferences ->
+            preferences[BUDGET_MAX] = budgetMax
+        }
+    }
+
+    fun getSelectedPreferences(): Flow<List<String>> {
+        return dataStore.data.map { preferences ->
+            preferences[SELECTED_PREFERENCES]?.split(",") ?: emptyList()
+        }
+    }
+
+    suspend fun saveSelectedPreferences(preferences: List<String>) {
+        dataStore.edit { prefs ->
+            prefs[SELECTED_PREFERENCES] = preferences.joinToString(",")
+        }
+    }
 
     suspend fun clearDataLogin() {
         dataStore.edit { preferences ->

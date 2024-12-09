@@ -8,14 +8,22 @@ import com.voyageur.application.databinding.ItemPreferencesBinding
 
 class MakeTripAdapter(
     private val preferencesList: List<Preferences>,
-    private val onItemClick: (Preferences) -> Unit
+    private val onItemClick: (Preferences) -> Unit,
+    private val onItemRemove: (Preferences) -> Unit
 ) : RecyclerView.Adapter<MakeTripAdapter.MakeTripViewHolder>() {
 
     inner class MakeTripViewHolder(val binding: ItemPreferencesBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                onItemClick(preferencesList[adapterPosition])
+                val preference = preferencesList[adapterPosition]
+                if (binding.root.isSelected) {
+                    onItemRemove(preference)
+                    binding.root.isSelected = false
+                } else {
+                    onItemClick(preference)
+                    binding.root.isSelected = true
+                }
             }
         }
     }

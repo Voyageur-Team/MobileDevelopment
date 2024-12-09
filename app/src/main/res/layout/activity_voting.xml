@@ -27,7 +27,7 @@
 
         <!-- Batas waktu Date -->
         <TextView
-            android:id="@+id/textView37"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -46,7 +46,7 @@
             android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView37"
+            app:layout_constraintTop_toBottomOf="@+id/tvDate"
             app:srcCompat="@drawable/voting"/>
 
         <!-- Status Text -->

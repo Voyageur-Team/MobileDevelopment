@@ -14,10 +14,12 @@ import com.voyageur.application.data.model.ResponseItenerary
 import com.voyageur.application.data.model.ResponseLogin
 import com.voyageur.application.data.model.ResponseParticipants
 import com.voyageur.application.data.model.ResponsePreferences
+import com.voyageur.application.data.model.ResponseProgress
 import com.voyageur.application.data.model.ResponseRegister
 import com.voyageur.application.data.model.ResponseTrip
 import com.voyageur.application.data.model.ResponseUserEmail
 import com.voyageur.application.data.model.ResponseVote
+import com.voyageur.application.data.model.UserPrefferedResponse
 import com.voyageur.application.data.model.UserTrip
 import retrofit2.Response
 import retrofit2.http.Body
@@ -117,5 +119,16 @@ interface ApiService {
         @Path("tripId") tripId: String,
         @Path("participantId") participantId: String
     ): Response<ResponseVote>
+
+    @GET("user/{tripId}/check-preferences/{userId}")
+    suspend fun checkUserPreferences(
+        @Path("tripId") tripId: String,
+        @Path("userId") userId: String
+    ): Response<UserPrefferedResponse>
+
+    @GET("user/{tripId}/participant-progress")
+    suspend fun getParticipantProgress(
+        @Path("tripId") tripId: String
+    ): Response<ResponseProgress>
 
 }

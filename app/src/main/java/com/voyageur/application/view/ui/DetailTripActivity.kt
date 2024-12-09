@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.voyageur.application.R
+import com.voyageur.application.data.model.DataTrip
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityDetailTripBinding
 import com.voyageur.application.view.utils.Formatted.Companion.formatRupiah
@@ -42,24 +43,31 @@ class DetailTripActivity : AppCompatActivity() {
         pref = AppPreferences.getInstance(applicationContext.dataStore)
         tripId = intent.getStringExtra("TRIP_ID")
 
-
         setupUI()
         observeViewModel()
     }
 
     override fun onResume() {
         super.onResume()
+        // Mulai dengan menampilkan loading
+        binding.progressBar.visibility = View.VISIBLE
         if (tripId != null) {
             lifecycleScope.launch {
                 val token = pref.getToken().firstOrNull()
                 userId = pref.getUserId().firstOrNull()
                 if (token != null && userId != null) {
+                    // Panggil semua data yang diperlukan di sini
                     detailTripViewModel.getSizeParticipants(tripId!!, token)
                     detailTripViewModel.getTripDetail(tripId!!, token)
                     detailTripViewModel.checkUserAlreadyVoting(token, tripId!!, userId!!)
                     detailTripViewModel.getIteneraryUserId(token, tripId!!, userId!!)
+                    detailTripViewModel.calculateParticipantProgress(token, tripId!!)
                 } else {
-                    Toast.makeText(this@DetailTripActivity, "Token or User ID not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@DetailTripActivity,
+                        "Token or User ID not found",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     finish()
                 }
             }
@@ -70,14 +78,22 @@ class DetailTripActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
+        binding.btnPrefences.visibility = View.GONE
+        binding.btnRekomendasi.visibility = View.GONE
+
         binding.btnPrefences.setOnClickListener {
             lifecycleScope.launch {
                 val token = pref.getToken().firstOrNull()
                 if (token != null && tripId != null) {
                     detailTripViewModel.postMostPreferences(token, tripId!!)
                     detailTripViewModel.postRecommendations(token, tripId!!)
+                    detailTripViewModel.getTripDetail(tripId!!, token)
                 } else {
-                    Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@DetailTripActivity,
+                        "Something went wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -110,15 +126,31 @@ class DetailTripActivity : AppCompatActivity() {
                 onBackPressed()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun observeViewModel() {
+        // Observasi data peserta
         detailTripViewModel.participantsCount.observe(this) { count ->
             binding.tvAnggota.text = "$count Orang"
         }
 
+        // Progress peserta
+        detailTripViewModel.completedParticipants.observe(this) { completed ->
+            val total = detailTripViewModel.totalParticipants.value ?: 0
+            binding.progressParticipants.text = "$completed/$total"
+            updateButtonVisibility(completed, total)
+        }
+
+        detailTripViewModel.totalParticipants.observe(this) { total ->
+            val completed = detailTripViewModel.completedParticipants.value ?: 0
+            binding.progressParticipants.text = "$completed/$total"
+            updateButtonVisibility(completed, total)
+        }
+
+        // Detail trip
         detailTripViewModel.tripDetail.observe(this) { tripDetail ->
             binding.tvTitle.text = tripDetail.title
             binding.tvDescription.text = tripDetail.description
@@ -127,17 +159,32 @@ class DetailTripActivity : AppCompatActivity() {
                 ?: "Belum ditentukan"
             binding.tvStartDate.text = tripDetail.tripStartDate ?: "Belum ditentukan"
             binding.tvEndDate.text = tripDetail.tripEndDate ?: "Belum ditentukan"
-            binding.progressParticipants.text = tripDetail.participants.size.toString()
+
+            checkUserIdEqualsCreatedBy(tripDetail)
         }
 
         detailTripViewModel.isLoading.observe(this) { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        }
-
-        detailTripViewModel.isError.observe(this) { isError ->
-            if (isError) {
-                Toast.makeText(this, detailTripViewModel.message.value, Toast.LENGTH_SHORT).show()
+            if (!isLoading) {
+                binding.progressBar.visibility = View.GONE
             }
+        }
+    }
+
+    private fun updateButtonVisibility(completed: Int, total: Int) {
+        if (completed == total) {
+            binding.btnPrefences.visibility = View.VISIBLE
+            binding.btnRekomendasi.visibility = View.VISIBLE
+        } else {
+            binding.btnPrefences.visibility = View.GONE
+            binding.btnRekomendasi.visibility = View.GONE
+        }
+    }
+
+    private fun checkUserIdEqualsCreatedBy(trip: DataTrip) {
+        if (userId == trip.createdBy) {
+            binding.btnPrefences.visibility = View.VISIBLE
+        } else {
+            binding.btnPrefences.visibility = View.GONE
         }
     }
 }

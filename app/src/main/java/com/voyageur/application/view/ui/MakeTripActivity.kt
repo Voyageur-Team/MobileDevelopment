@@ -24,6 +24,7 @@ import com.voyageur.application.data.model.Preferences
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityMakeTripBinding
 import com.voyageur.application.viewmodel.MakeTripViewModel
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 class MakeTripActivity : AppCompatActivity() {
@@ -39,6 +40,8 @@ class MakeTripActivity : AppCompatActivity() {
     private var userId: String? = null
     private var userName: String? = null
     private var userEmail: String? = null
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +63,18 @@ class MakeTripActivity : AppCompatActivity() {
         observeViewModelPreferences()
         fetchCities()
         fetchPreferences()
+
+        pref.getUserId().asLiveData().observe(this) { id ->
+            userId = id ?: ""
+            if (!tripId.isNullOrEmpty() && !userId.isNullOrEmpty()) {
+                lifecycleScope.launch {
+                    val token = pref.getToken().firstOrNull()
+                    if (!token.isNullOrEmpty()) {
+                        loadTripDetail(token, tripId!!, userId!!)
+                    }
+                }
+            }
+        }
 
         binding.datePicker.setOnClickListener {
             openDateRangePicker()
@@ -130,19 +145,15 @@ class MakeTripActivity : AppCompatActivity() {
     private fun setupTokenObserver() {
         pref.getToken().asLiveData().observe(this) { token ->
             userToken = token ?: ""
-            Log.d("MakeTripActivity", "userToken: $userToken")
         }
         pref.getName().asLiveData().observe(this) { name ->
             userName = name ?: "Anonymous"
-            Log.d("MakeTripActivity", "userName: $userName")
         }
         pref.getUserId().asLiveData().observe(this) { id ->
             userId = id ?: ""
-            Log.d("MakeTripActivity", "userId: $userId")
         }
         pref.getEmail().asLiveData().observe(this) { email ->
             userEmail = email ?: ""
-            Log.d("MakeTripActivity", "userEmail: $userEmail")
         }
 
         pref.getLoginSession().asLiveData().observe(this) { session ->
@@ -186,7 +197,7 @@ class MakeTripActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        preferencesAdapter = MakeTripAdapter(emptyList()) { preference ->
+        preferencesAdapter = MakeTripAdapter(emptyList(), { preference ->
             if (selectedPreferences.size < 3) {
                 selectedPreferences.add(preference)
                 val selectedNames = selectedPreferences.joinToString(", ") { it.name }
@@ -194,7 +205,11 @@ class MakeTripActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Maksimal 3 preferensi yang dapat dipilih", Toast.LENGTH_SHORT).show()
             }
-        }
+        }, { preference ->
+            selectedPreferences.remove(preference)
+            val selectedNames = selectedPreferences.joinToString(", ") { it.name }
+            binding.preferenceCategory.setText(selectedNames)
+        })
         binding.rvPreferences.apply {
             layoutManager = StaggeredGridLayoutManager(3, GridLayoutManager.VERTICAL)
             adapter = preferencesAdapter
@@ -229,7 +244,7 @@ class MakeTripActivity : AppCompatActivity() {
     private fun observeViewModelPreferences() {
         makeTripViewModel.preferences.observe(this) { preferencesList ->
             if (preferencesList.isNotEmpty()) {
-                preferencesAdapter = MakeTripAdapter(preferencesList) { preference ->
+                preferencesAdapter = MakeTripAdapter(preferencesList, { preference ->
                     if (selectedPreferences.size < 3) {
                         selectedPreferences.add(preference)
                         val selectedNames = selectedPreferences.joinToString(", ") { it.name }
@@ -237,7 +252,11 @@ class MakeTripActivity : AppCompatActivity() {
                     } else {
                         Toast.makeText(this, "Maksimal 3 preferensi yang dapat dipilih", Toast.LENGTH_SHORT).show()
                     }
-                }
+                }, { preference ->
+                    selectedPreferences.remove(preference)
+                    val selectedNames = selectedPreferences.joinToString(", ") { it.name }
+                    binding.preferenceCategory.setText(selectedNames)
+                })
                 binding.rvPreferences.adapter = preferencesAdapter
             } else {
                 println("No preferences found")
@@ -276,6 +295,24 @@ class MakeTripActivity : AppCompatActivity() {
 
         dateRangePicker.addOnNegativeButtonClickListener {
             Toast.makeText(this, "Pilih Rentang Tanggal Dibatalkan", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun loadTripDetail(token: String, tripId: String, userId: String) {
+        makeTripViewModel.getUserPreffered(token, tripId, userId)
+        makeTripViewModel.tripDetailUser.observe(this) { tripDetail ->
+            if (tripDetail != null) {
+                binding.etTujuan1.setText(tripDetail.preferredDestinations[0])
+                binding.etTujuan2.setText(tripDetail.preferredDestinations[1])
+                val startDate = tripDetail.availableDates[0]
+                val endDate = tripDetail.availableDates[1]
+                binding.datePicker.setText("$startDate - $endDate")
+                binding.budgetMin.setText(tripDetail.budgetRange[0].toString())
+                binding.budgetMax.setText(tripDetail.budgetRange[1].toString())
+                binding.preferenceCategory.setText(tripDetail.preferredCategory.joinToString(", "))
+            } else {
+                Log.e("MakeTripActivity", "Trip detail is null")
+            }
         }
     }
 

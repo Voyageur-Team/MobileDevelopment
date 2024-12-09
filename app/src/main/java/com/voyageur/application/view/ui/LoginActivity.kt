@@ -27,11 +27,14 @@ import com.voyageur.application.viewmodel.TokenViewModel
 import com.voyageur.application.viewmodel.ViewModelFactory
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val loginViewModel: AuthViewModel by lazy {
         ViewModelProvider(this)[AuthViewModel::class.java]
     }
+
+    private var isLoginInProgress = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +51,11 @@ class LoginActivity : AppCompatActivity() {
             binding.etPassword.clearFocus()
 
             if (checkAkun()) {
+                if (isLoginInProgress) return@setOnClickListener
+
                 showLoading(true)
+                isLoginInProgress = true
+
                 val requestLogin = LoginDataAccount(
                     binding.etEmail.text.toString().trim(),
                     binding.etPassword.text.toString().trim()
@@ -113,25 +120,22 @@ class LoginActivity : AppCompatActivity() {
 
     private fun checkLogin(userLoginViewModel: TokenViewModel) {
         loginViewModel.isError.observe(this) { isError ->
-            loginViewModel.message.observe(this) { message ->
-                if (!isError) {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-
-                    val user = loginViewModel.userLogin.value
-                    if (user != null) {
-                        userLoginViewModel.saveLoginSession(true)
-                        userLoginViewModel.saveToken(user.loginResult.token)
-                        userLoginViewModel.saveName(user.loginResult.userName)
-                        userLoginViewModel.saveUserId(user.loginResult.userId)
-                        userLoginViewModel.saveEmail(user.loginResult.email)
-                        navigateToApp()
-                    } else {
-                        Toast.makeText(this, "Data pengguna tidak lengkap.", Toast.LENGTH_SHORT).show()
-                    }
+            if (!isError) {
+                val user = loginViewModel.userLogin.value
+                if (user != null) {
+                    userLoginViewModel.saveLoginSession(true)
+                    userLoginViewModel.saveToken(user.loginResult.token)
+                    userLoginViewModel.saveName(user.loginResult.userName)
+                    userLoginViewModel.saveUserId(user.loginResult.userId)
+                    userLoginViewModel.saveEmail(user.loginResult.email)
                 } else {
-                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Data pengguna tidak lengkap.", Toast.LENGTH_SHORT).show()
                 }
+            } else {
+                Toast.makeText(this, loginViewModel.message.value, Toast.LENGTH_SHORT).show()
             }
+
+            isLoginInProgress = false
         }
     }
 
@@ -154,5 +158,4 @@ class LoginActivity : AppCompatActivity() {
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
     }
-
 }

@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".view.ui.SettingsActivity">
 
-    <!-- Profile Section -->
     <TextView
         android:id="@+id/textView20"
         android:layout_width="wrap_content"

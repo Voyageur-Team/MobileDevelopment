@@ -13,8 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.voyageur.application.data.adapter.VotingAdapter
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivityVotingBinding
+import com.voyageur.application.viewmodel.DetailTripViewModel
 import com.voyageur.application.viewmodel.VotingViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class VotingActivity : AppCompatActivity() {
 
@@ -23,6 +28,7 @@ class VotingActivity : AppCompatActivity() {
     private lateinit var pref: AppPreferences
     private var tripId: String? = null
     private lateinit var adapter: VotingAdapter
+    private val detailTrip: DetailTripViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +47,7 @@ class VotingActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
                     if (token.isNullOrEmpty()) {
+                        detailTrip.getTripDetail(token, tripId!!)
                         Toast.makeText(this@VotingActivity, "Token is empty", Toast.LENGTH_SHORT).show()
                         return@collect
                     }
@@ -59,6 +66,8 @@ class VotingActivity : AppCompatActivity() {
                 Toast.makeText(this@VotingActivity, "Please select an itinerary", Toast.LENGTH_SHORT).show()
             }
         }
+
+        displayEventDate()
     }
 
     private fun setupUI() {
@@ -81,6 +90,8 @@ class VotingActivity : AppCompatActivity() {
         votingViewModel.itineraries.observe(this) { itineraries ->
             adapter.updateData(itineraries)
         }
+
+
     }
 
     private fun showLoading(isLoading: Boolean) {
@@ -105,13 +116,36 @@ class VotingActivity : AppCompatActivity() {
                             }
                             votingViewModel.userVote(token, tripId!!, userId, itineraryId)
                             Toast.makeText(this@VotingActivity, "Voting berhasil", Toast.LENGTH_SHORT).show()
-                            finish()
+                            binding.btnVote.visibility = View.GONE
                         }
                     }
                 }
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    private fun displayEventDate() {
+        val tripStartDateString = detailTrip.tripDetail.value?.tripStartDate
+        if (tripStartDateString != null) {
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val tripStartDate: Date? = dateFormat.parse(tripStartDateString)
+
+            if (tripStartDate != null) {
+                val calendar = Calendar.getInstance()
+                calendar.time = tripStartDate
+                calendar.add(Calendar.DAY_OF_YEAR, -1)
+
+                val eventDateFormat = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                val eventDate = eventDateFormat.format(calendar.time)
+
+                binding.tvDate.text = eventDate
+            } else {
+                binding.tvDate.text = "Invalid trip start date"
+            }
+        } else {
+            binding.tvDate.text = "Trip start date not available"
+        }
     }
 
 
