@@ -1,17 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     app:flow_horizontalAlign="center">
 
     <ImageView
         android:id="@+id/titleImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="482dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/onboarding1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -19,28 +22,27 @@
         android:id="@+id/texttitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="@string/title_onboarding1"
         android:textAlignment="center"
-        android:textSize="28dp"
+        android:textSize="24sp"
         android:textStyle="bold"
+        android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleImage" />
 
     <TextView
-        android:id="@+id/textdeccription"
+        android:id="@+id/textdescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginTop="16dp"
         android:text="@string/desc_onboarding1"
         android:textAlignment="center"
         android:textColor="@color/black"
-        android:textSize="16dp"
+        android:textSize="16sp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/texttitle" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

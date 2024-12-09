@@ -45,4 +45,27 @@ class VotingViewModel : ViewModel() {
         }
     }
 
+    fun userVote(token: String, tripId: String, userId: String, iteneraryId: String){
+        viewModelScope.launch{
+            _isLoading.value = true
+            try{
+                val response = ApiConfig.getApiService(token).voteItenerary(tripId, userId, iteneraryId)
+                if(response.isSuccessful){
+                    _isError.value = response.body()?.error
+                    _message.value = response.body()?.message
+                } else {
+                    _isError.value = true
+                    _message.value = "Error: ${response.code()} ${response.message()}"
+                    Log.e("VotingViewModel", "API Error: ${response.code()} ${response.message()}")
+                }
+
+            } catch (e: Exception){
+                _isError.value = true
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
 }

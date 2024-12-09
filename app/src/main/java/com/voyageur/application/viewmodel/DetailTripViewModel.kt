@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.voyageur.application.data.model.DataTrip
+import com.voyageur.application.data.model.DataVote
 import com.voyageur.application.data.network.ApiConfig
 import kotlinx.coroutines.launch
 
@@ -23,6 +24,12 @@ class DetailTripViewModel: ViewModel() {
 
     private val _tripDetail = MutableLiveData<DataTrip>()
     val tripDetail: LiveData<DataTrip> get() = _tripDetail
+
+    private val _userVote = MutableLiveData<Boolean>()
+    val userVote: LiveData<Boolean> get() = _userVote
+
+    private val _iteneraryUser = MutableLiveData<DataVote>()
+    val iteneraryUser: LiveData<DataVote> get() = _iteneraryUser
 
     fun getSizeParticipants(tripId: String, token: String) {
         viewModelScope.launch {
@@ -111,14 +118,37 @@ class DetailTripViewModel: ViewModel() {
         }
     }
 
-    fun getRecommendation(tripId: String, token: String) {
+    fun checkUserAlreadyVoting(token: String, tripId: String, userId: String) {
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                val response = ApiConfig.getApiService(token).getRecommendations(tripId)
+                val response = ApiConfig.getApiService(token).checkUserAlreadyVoting(tripId, userId)
                 if (response.isSuccessful && response.body() != null) {
+                    _userVote.value = response.body()?.error
                     _isError.value = false
-                    _message.value = "Recommendation fetched successfully!"
+                    _message.value = "Vote fetched successfully!"
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    fun getIteneraryUserId(token: String, tripId: String, userId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).checkUserAlreadyVoting(tripId, userId)
+                if (response.isSuccessful && response.body() != null) {
+                    _iteneraryUser.postValue(response.body()?.data)
+                    _isError.value = response.body()?.error ?: false
+                    _message.value = response.body()?.message ?: "An error occurred."
                 } else {
                     _isError.value = true
                     _message.value = response.errorBody()?.string() ?: "An error occurred."

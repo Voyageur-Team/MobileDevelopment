@@ -1,7 +1,6 @@
 package com.voyageur.application.view.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -44,36 +43,41 @@ class IteneraryActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)
-        itineraryId = intent.getStringExtra("ITINERARY_ID") ?: return
-        tripId = intent.getStringExtra("TRIP_ID") ?: return
+        itineraryId = intent.getStringExtra("ITINERARY_ID") ?: ""
+        tripId = intent.getStringExtra("TRIP_ID") ?: ""
+
+        if (itineraryId.isEmpty() || tripId.isEmpty()) {
+            Toast.makeText(this, "Invalid itinerary or trip ID", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
         setupUI()
         observeViewModel()
         fetchData()
     }
 
-    private fun setupUI() {
-        adapter = IteneraryAdapter(emptyList())
-        binding.rvItineraries.layoutManager = LinearLayoutManager(this)
-        binding.rvItineraries.adapter = adapter
-    }
-
     private fun fetchData() {
         if (itineraryId.isNotEmpty() && tripId.isNotEmpty()) {
             lifecycleScope.launch {
                 pref.getToken().collect { token ->
-                    Log.d("ItineraryActivity", "Token: $token")
-                    if (token.isEmpty()) {
-                        Log.d("ItineraryActivity", "Token is empty")
-                        return@collect
+                    if (token.isNotEmpty()) {
+                        itineraryViewModel.getIteneraries(token, tripId, itineraryId)
+                    } else {
+                        Toast.makeText(this@IteneraryActivity, "Token is empty", Toast.LENGTH_SHORT).show()
                     }
-                    itineraryViewModel.getIteneraries(token, tripId, itineraryId)
                 }
-
             }
         } else {
+            Toast.makeText(this, "Invalid itinerary or trip ID", Toast.LENGTH_SHORT).show()
             finish()
         }
+    }
+
+    private fun setupUI() {
+        adapter = IteneraryAdapter(emptyList())
+        binding.rvItineraries.layoutManager = LinearLayoutManager(this)
+        binding.rvItineraries.adapter = adapter
     }
 
     private fun observeViewModel() {
@@ -94,7 +98,6 @@ class IteneraryActivity : AppCompatActivity() {
 
         itineraryViewModel.isError.observe(this) { isError ->
             if (isError) {
-                Log.d("ItineraryActivity", "Error: ${itineraryViewModel.message.value}")
                 Toast.makeText(this, itineraryViewModel.message.value, Toast.LENGTH_SHORT).show()
             }
         }

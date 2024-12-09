@@ -47,7 +47,7 @@ class OnboardingAdapter(private var context: Context) : PagerAdapter() {
 
         val slidetitleimage = view.findViewById<ImageView>(R.id.titleImage)
         val slideHeading = view.findViewById<TextView>(R.id.texttitle)
-        val slideDescription = view.findViewById<TextView>(R.id.textdeccription)
+        val slideDescription = view.findViewById<TextView>(R.id.textdescription)
 
         slidetitleimage.setImageResource(images[position])
         slideHeading.setText(headings[position])

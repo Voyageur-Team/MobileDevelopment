@@ -24,6 +24,7 @@ class DetailTripActivity : AppCompatActivity() {
     private lateinit var pref: AppPreferences
     private val detailTripViewModel: DetailTripViewModel by viewModels()
     private var tripId: String? = null
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +42,7 @@ class DetailTripActivity : AppCompatActivity() {
         pref = AppPreferences.getInstance(applicationContext.dataStore)
         tripId = intent.getStringExtra("TRIP_ID")
 
+
         setupUI()
         observeViewModel()
     }
@@ -49,11 +51,16 @@ class DetailTripActivity : AppCompatActivity() {
         super.onResume()
         if (tripId != null) {
             lifecycleScope.launch {
-                pref.getToken().collect { token ->
-                    if (token.isNotEmpty()) {
-                        detailTripViewModel.getSizeParticipants(tripId!!, token)
-                        detailTripViewModel.getTripDetail(tripId!!, token)
-                    }
+                val token = pref.getToken().firstOrNull()
+                userId = pref.getUserId().firstOrNull()
+                if (token != null && userId != null) {
+                    detailTripViewModel.getSizeParticipants(tripId!!, token)
+                    detailTripViewModel.getTripDetail(tripId!!, token)
+                    detailTripViewModel.checkUserAlreadyVoting(token, tripId!!, userId!!)
+                    detailTripViewModel.getIteneraryUserId(token, tripId!!, userId!!)
+                } else {
+                    Toast.makeText(this@DetailTripActivity, "Token or User ID not found", Toast.LENGTH_SHORT).show()
+                    finish()
                 }
             }
         } else {
@@ -76,17 +83,18 @@ class DetailTripActivity : AppCompatActivity() {
         }
 
         binding.btnRekomendasi.setOnClickListener {
-            lifecycleScope.launch {
-                val token = pref.getToken().firstOrNull()
-                if (token != null && tripId != null) {
-                } else {
-                    Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            if (detailTripViewModel.userVote.value == false) {
+                val intent = Intent(this, IteneraryActivity::class.java).apply {
+                    putExtra("ITINERARY_ID", detailTripViewModel.iteneraryUser.value?.idItenerary)
+                    putExtra("TRIP_ID", tripId)
                 }
+                startActivity(intent)
+            } else {
+                val intent = Intent(this, VotingActivity::class.java).apply {
+                    putExtra("TRIP_ID", tripId)
+                }
+                startActivity(intent)
             }
-
-            val intent = Intent(this, VotingActivity::class.java)
-            intent.putExtra("TRIP_ID", tripId)
-            startActivity(intent)
         }
 
         binding.makeTrip.setOnClickListener {

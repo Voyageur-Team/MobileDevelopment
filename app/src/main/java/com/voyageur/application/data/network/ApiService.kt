@@ -17,6 +17,7 @@ import com.voyageur.application.data.model.ResponsePreferences
 import com.voyageur.application.data.model.ResponseRegister
 import com.voyageur.application.data.model.ResponseTrip
 import com.voyageur.application.data.model.ResponseUserEmail
+import com.voyageur.application.data.model.ResponseVote
 import com.voyageur.application.data.model.UserTrip
 import retrofit2.Response
 import retrofit2.http.Body
@@ -103,5 +104,18 @@ interface ApiService {
         @Path("tripId") tripId: String,
         @Path("participantId") participantId: String
     ): Response<ResponseParticipants>
+
+    @POST("trips/{tripId}/vote/{participantId}/{iteneraryId}")
+    suspend fun voteItenerary(
+        @Path("tripId") tripId: String,
+        @Path("participantId") participantId: String,
+        @Path("iteneraryId") iteneraryId: String
+    ) : Response<ResponseVote>
+
+    @GET("trips/{tripId}/users/{participantId}/check-vote")
+    suspend fun checkUserAlreadyVoting(
+        @Path("tripId") tripId: String,
+        @Path("participantId") participantId: String
+    ): Response<ResponseVote>
 
 }

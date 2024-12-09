@@ -6,6 +6,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,7 +22,6 @@ class VotingActivity : AppCompatActivity() {
     private val votingViewModel: VotingViewModel by viewModels()
     private lateinit var pref: AppPreferences
     private var tripId: String? = null
-
     private lateinit var adapter: VotingAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,6 @@ class VotingActivity : AppCompatActivity() {
         pref = AppPreferences.getInstance(applicationContext.dataStore)
         tripId = intent.getStringExtra("TRIP_ID")
         setupUI()
-        observeViewModel()
 
         if (tripId != null) {
             observeViewModel()
@@ -50,6 +49,15 @@ class VotingActivity : AppCompatActivity() {
             }
         } else {
             finish()
+        }
+
+        binding.btnVote.setOnClickListener {
+            val selectedItinerary = adapter.getSelectedItinerary()
+            if (selectedItinerary != null) {
+                showConfirmationDialog(selectedItinerary.itineraryId)
+            } else {
+                Toast.makeText(this@VotingActivity, "Please select an itinerary", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -73,12 +81,39 @@ class VotingActivity : AppCompatActivity() {
         votingViewModel.itineraries.observe(this) { itineraries ->
             adapter.updateData(itineraries)
         }
-
     }
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
+
+    private fun showConfirmationDialog(itineraryId: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Confirm Vote")
+            .setMessage("Are you sure you want to vote for this recommendation?")
+            .setPositiveButton("Yes") { _, _ ->
+                lifecycleScope.launch {
+                    pref.getUserId().collect { userId ->
+                        pref.getToken().collect { token ->
+                            if (token.isNullOrEmpty()) {
+                                Toast.makeText(this@VotingActivity, "Token is empty", Toast.LENGTH_SHORT).show()
+                                return@collect
+                            }
+                            if (userId.isNullOrEmpty()) {
+                                Toast.makeText(this@VotingActivity, "User ID is empty", Toast.LENGTH_SHORT).show()
+                                return@collect
+                            }
+                            votingViewModel.userVote(token, tripId!!, userId, itineraryId)
+                            Toast.makeText(this@VotingActivity, "Voting berhasil", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
