@@ -40,6 +40,10 @@ class SettingsActivity : AppCompatActivity() {
 
         setUserData()
 
+        binding.btnAbout.setOnClickListener {
+            startActivity(Intent(this, AboutActivity::class.java))
+        }
+
         binding.btnLogout.setOnClickListener {
             logoutUser()
         }

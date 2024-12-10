@@ -18,16 +18,12 @@ class DetailPopularActivity : AppCompatActivity() {
         val image = intent.getIntExtra("image", -1)
         val description = intent.getStringExtra("description")
         val location = intent.getStringExtra("location")
-        val rating = intent.getFloatExtra("rating", 0f)
-        val price = intent.getFloatExtra("price", 0f)
 
         binding.apply {
             imgPopularDestination.setImageResource(image)
             namePopularDestination.text = name
-            descriptionPopularDestination.text = description
+            descriptionDestination.text = description
             locationPopularDestination.text = location
-            ratingPopularDestination.text = rating.toString()
-            pricePopularDestination.text = price.toString()
         }
 
         binding.btnRencana.setOnClickListener {

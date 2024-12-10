@@ -132,6 +132,11 @@ interface ApiService {
         @Path("tripId") tripId: String
     ): Response<ResponseProgress>
 
+    @POST("/trips/{tripId}/finalize-voting")
+    suspend fun postFinalizeVoting(
+        @Path("tripId") tripId: String
+    ): Response<ResponseDividedItenerary>
+
     @GET("trips/{tripId}/finalizevoting")
     suspend fun finalizeVoting(
         @Path("tripId") tripId: String

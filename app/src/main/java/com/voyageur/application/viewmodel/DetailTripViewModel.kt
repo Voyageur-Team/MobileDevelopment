@@ -170,4 +170,25 @@ class DetailTripViewModel: ViewModel() {
             }
         }
     }
+
+    fun postFinalizeVoting(token: String, tripId: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val response = ApiConfig.getApiService(token).postFinalizeVoting(tripId)
+                if (response.isSuccessful && response.body() != null) {
+                    _isError.value = response.body()?.error ?: false
+                    _message.value = response.body()?.message ?: "An error occurred."
+                } else {
+                    _isError.value = true
+                    _message.value = response.errorBody()?.string() ?: "An error occurred."
+                }
+            } catch (e: Exception) {
+                _isError.value = true
+                _message.value = "Failed to fetch data: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 }

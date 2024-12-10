@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="176dp"
+        android:layout_marginTop="186dp"
         android:text="Nusa Penida"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
@@ -32,7 +32,9 @@
         android:id="@+id/locationPopularDestination"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
+        android:drawableStart="@drawable/ic_pin_grey"
+        android:gravity="center_horizontal|center_vertical"
         android:text="Bali, Indonesia"
         android:textColor="#D1D1D1"
         android:textSize="12sp"
@@ -41,5 +43,6 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/namePopularDestination" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

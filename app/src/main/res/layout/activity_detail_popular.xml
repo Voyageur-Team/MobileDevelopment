@@ -51,7 +51,23 @@
             tools:text="Ini text nya" />
 
         <TextView
-            android:id="@+id/descriptionPopularDestination"
+            android:id="@+id/titleDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:text="Tentang Destinasi Ini"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/locationPopularDestination"
+            tools:text="Tentang Destinasi Ini" />
+
+        <TextView
+            android:id="@+id/descriptionDestination"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -59,38 +75,11 @@
             android:layout_marginEnd="24dp"
             android:textColor="#7D848D"
             android:textSize="16sp"
+            android:justificationMode="inter_word"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/locationPopularDestination"
-            tools:text="Ini text nya" />
-
-        <TextView
-            android:id="@+id/ratingPopularDestination"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/descriptionPopularDestination"
-            tools:text="Ini text nya" />
-
-        <TextView
-            android:id="@+id/pricePopularDestination"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="24dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ratingPopularDestination"
+            app:layout_constraintTop_toBottomOf="@id/titleDescription"
             tools:text="Ini text nya" />
 
         <Button
@@ -104,11 +93,12 @@
             android:backgroundTint="@color/colorPrimary"
             android:text="Tambah Rencana"
             android:textSize="16sp"
+            android:paddingVertical="16dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pricePopularDestination" />
+            app:layout_constraintTop_toBottomOf="@+id/descriptionDestination" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

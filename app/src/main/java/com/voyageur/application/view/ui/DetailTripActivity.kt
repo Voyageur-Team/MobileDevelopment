@@ -119,13 +119,13 @@ class DetailTripActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.button2.setOnClickListener {
+        binding.btnHasil.setOnClickListener {
             val intent = Intent(this, RecommendationActivity::class.java)
             intent.putExtra("TRIP_ID", tripId)
             startActivity(intent)
         }
 
-        binding.button.setOnClickListener {
+        binding.btnHasilRekomendasi.setOnClickListener {
             if (detailTripViewModel.userVote.value == false) {
                 val intent = Intent(this@DetailTripActivity, IteneraryActivity::class.java).apply {
                     putExtra("ITINERARY_ID", detailTripViewModel.iteneraryUser.value?.idItenerary)
@@ -143,7 +143,7 @@ class DetailTripActivity : AppCompatActivity() {
 
 
     private fun checkUserIdEqualsCreatedBy(trip: DataTrip) {
-        if (userId == trip.createdBy) {
+        if (userId == trip.createdBy ) {
             binding.btnRekomendasi.visibility = View.VISIBLE
         } else {
             binding.btnRekomendasi.visibility = View.GONE

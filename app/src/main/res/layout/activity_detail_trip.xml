@@ -300,7 +300,7 @@
         </androidx.cardview.widget.CardView>
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/btnHasilRekomendasi"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -314,13 +314,18 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnHasil"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="28dp"
-            android:text="Button"
-            app:layout_constraintBottom_toTopOf="@+id/button"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:paddingVertical="16dp"
+            android:text="Hasil Akhir"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/btnHasilRekomendasi"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent" />
 
 
