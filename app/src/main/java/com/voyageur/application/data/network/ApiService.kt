@@ -10,6 +10,7 @@ import com.voyageur.application.data.model.PostMostPreferences
 import com.voyageur.application.data.model.PostRecommendations
 import com.voyageur.application.data.model.RegisterDataAccount
 import com.voyageur.application.data.model.ResponseCities
+import com.voyageur.application.data.model.ResponseDividedItenerary
 import com.voyageur.application.data.model.ResponseItenerary
 import com.voyageur.application.data.model.ResponseLogin
 import com.voyageur.application.data.model.ResponseParticipants
@@ -130,5 +131,10 @@ interface ApiService {
     suspend fun getParticipantProgress(
         @Path("tripId") tripId: String
     ): Response<ResponseProgress>
+
+    @GET("trips/{tripId}/finalizevoting")
+    suspend fun finalizeVoting(
+        @Path("tripId") tripId: String
+    ): Response<ResponseDividedItenerary>
 
 }

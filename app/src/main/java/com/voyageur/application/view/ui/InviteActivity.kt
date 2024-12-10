@@ -31,7 +31,6 @@ class InviteActivity : AppCompatActivity() {
     private lateinit var pref: AppPreferences
 
     private var tripId: String? = null
-    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

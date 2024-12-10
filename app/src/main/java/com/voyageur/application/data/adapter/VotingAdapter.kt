@@ -16,6 +16,7 @@ class VotingAdapter(
     inner class ViewHolder(private val binding: ItemRecommendationBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Iteneraries, position: Int) {
             binding.textView.text = "Rekomendasi ${position + 1}"
+            binding.tvVotes.text = "Dipilih oleh ${item.votes?.size ?: 0} peserta"
             binding.radioButton.isChecked = position == selectedPosition
             binding.radioButton.setOnClickListener {
                 if (selectedPosition != position) {

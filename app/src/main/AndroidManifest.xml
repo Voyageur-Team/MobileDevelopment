@@ -32,12 +32,6 @@
             android:name=".view.ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ui.CityActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.ui.PreferencesActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.ui.DetailPopularActivity"
             android:exported="false" />
         <activity

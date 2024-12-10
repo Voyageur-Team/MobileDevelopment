@@ -2,6 +2,8 @@ package com.voyageur.application.view.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -37,80 +39,78 @@ class DetailTripActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         supportActionBar?.title = ""
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)
         tripId = intent.getStringExtra("TRIP_ID")
 
-        setupUI()
+        Handler(Looper.getMainLooper()).postDelayed({
+            setupUI()
+        },2000)
         observeViewModel()
-    }
 
-    override fun onResume() {
-        super.onResume()
-        // Mulai dengan menampilkan loading
-        binding.progressBar.visibility = View.VISIBLE
-        if (tripId != null) {
-            lifecycleScope.launch {
-                val token = pref.getToken().firstOrNull()
-                userId = pref.getUserId().firstOrNull()
-                if (token != null && userId != null) {
-                    // Panggil semua data yang diperlukan di sini
-                    detailTripViewModel.getSizeParticipants(tripId!!, token)
-                    detailTripViewModel.getTripDetail(tripId!!, token)
-                    detailTripViewModel.checkUserAlreadyVoting(token, tripId!!, userId!!)
-                    detailTripViewModel.getIteneraryUserId(token, tripId!!, userId!!)
-                    detailTripViewModel.calculateParticipantProgress(token, tripId!!)
-                } else {
-                    Toast.makeText(
-                        this@DetailTripActivity,
-                        "Token or User ID not found",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    finish()
-                }
-            }
-        } else {
-            Toast.makeText(this, "Trip ID not found", Toast.LENGTH_SHORT).show()
-            finish()
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            Handler(Looper.getMainLooper()).postDelayed({
+                setupUI()
+            },2000)
         }
     }
 
     private fun setupUI() {
-        binding.btnPrefences.visibility = View.GONE
         binding.btnRekomendasi.visibility = View.GONE
+        showLoading(true)
 
-        binding.btnPrefences.setOnClickListener {
-            lifecycleScope.launch {
-                val token = pref.getToken().firstOrNull()
-                if (token != null && tripId != null) {
-                    detailTripViewModel.postMostPreferences(token, tripId!!)
-                    detailTripViewModel.postRecommendations(token, tripId!!)
-                    detailTripViewModel.getTripDetail(tripId!!, token)
-                } else {
-                    Toast.makeText(
-                        this@DetailTripActivity,
-                        "Something went wrong",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        lifecycleScope.launch {
+            val token = pref.getToken().firstOrNull()
+            userId = pref.getUserId().firstOrNull()
+
+            if (token != null && userId != null && tripId != null) {
+                detailTripViewModel.getTripDetail(tripId!!, token)
+
+                detailTripViewModel.tripDetail.observe(this@DetailTripActivity) { tripDetail ->
+                    checkUserIdEqualsCreatedBy(tripDetail)
+                    detailTripViewModel.getSizeParticipants(tripId!!, token)
+                    detailTripViewModel.checkUserAlreadyVoting(token, tripId!!, userId!!)
+                    detailTripViewModel.getIteneraryUserId(token, tripId!!, userId!!)
+                    showLoading(false)
                 }
+            } else {
+                showLoading(false)
+                Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        lifecycleScope.launch {
+            val token = pref.getToken().firstOrNull()
+            if (token != null && tripId != null) {
+                detailTripViewModel.calculateParticipantProgress(token, tripId!!)
+            } else {
+                Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.btnRekomendasi.setOnClickListener {
-            if (detailTripViewModel.userVote.value == false) {
-                val intent = Intent(this, IteneraryActivity::class.java).apply {
-                    putExtra("ITINERARY_ID", detailTripViewModel.iteneraryUser.value?.idItenerary)
-                    putExtra("TRIP_ID", tripId)
+            showLoading(true)
+            Toast.makeText(this@DetailTripActivity, "Harap tunggu, sedang memproses rekomendasi", Toast.LENGTH_SHORT).show()
+            Handler(Looper.getMainLooper()).postDelayed({
+                lifecycleScope.launch {
+                    val token = pref.getToken().firstOrNull()
+                    if (token != null && tripId != null) {
+                        detailTripViewModel.postMostPreferences(token, tripId!!)
+                        detailTripViewModel.postRecommendations(token, tripId!!)
+                        detailTripViewModel.getTripDetail(tripId!!, token)
+                        showLoading(false)
+                        Toast.makeText(this@DetailTripActivity, "Rekomendasi berhasil dibuat", Toast.LENGTH_SHORT).show()
+
+
+                    } else {
+                        showLoading(false)
+                        Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                startActivity(intent)
-            } else {
-                val intent = Intent(this, VotingActivity::class.java).apply {
-                    putExtra("TRIP_ID", tripId)
-                }
-                startActivity(intent)
-            }
+            }, 5000)
         }
 
         binding.makeTrip.setOnClickListener {
@@ -118,26 +118,43 @@ class DetailTripActivity : AppCompatActivity() {
             intent.putExtra("TRIP_ID", tripId)
             startActivity(intent)
         }
+
+        binding.button2.setOnClickListener {
+            val intent = Intent(this, RecommendationActivity::class.java)
+            intent.putExtra("TRIP_ID", tripId)
+            startActivity(intent)
+        }
+
+        binding.button.setOnClickListener {
+            if (detailTripViewModel.userVote.value == false) {
+                val intent = Intent(this@DetailTripActivity, IteneraryActivity::class.java).apply {
+                    putExtra("ITINERARY_ID", detailTripViewModel.iteneraryUser.value?.idItenerary)
+                    putExtra("TRIP_ID", tripId)
+                }
+                startActivity(intent)
+            } else {
+                val intent = Intent(this@DetailTripActivity, VotingActivity::class.java).apply {
+                    putExtra("TRIP_ID", tripId)
+                }
+                startActivity(intent)
+            }
+        }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                onBackPressed()
-                true
-            }
 
-            else -> super.onOptionsItemSelected(item)
+    private fun checkUserIdEqualsCreatedBy(trip: DataTrip) {
+        if (userId == trip.createdBy) {
+            binding.btnRekomendasi.visibility = View.VISIBLE
+        } else {
+            binding.btnRekomendasi.visibility = View.GONE
         }
     }
 
     private fun observeViewModel() {
-        // Observasi data peserta
         detailTripViewModel.participantsCount.observe(this) { count ->
             binding.tvAnggota.text = "$count Orang"
         }
 
-        // Progress peserta
         detailTripViewModel.completedParticipants.observe(this) { completed ->
             val total = detailTripViewModel.totalParticipants.value ?: 0
             binding.progressParticipants.text = "$completed/$total"
@@ -150,17 +167,14 @@ class DetailTripActivity : AppCompatActivity() {
             updateButtonVisibility(completed, total)
         }
 
-        // Detail trip
         detailTripViewModel.tripDetail.observe(this) { tripDetail ->
             binding.tvTitle.text = tripDetail.title
-            binding.tvDescription.text = tripDetail.description
+            binding.tvDescription.text = "${tripDetail.mostCommonCategories?.get(0)}, ${tripDetail.mostCommonCategories?.get(1)}, ${tripDetail.mostCommonCategories?.get(2)}"
             binding.tvCity.text = tripDetail.mostCommonDestination ?: "Belum ditentukan"
             binding.tvBudget.text = tripDetail.averageBudgetRange?.let { formatRupiah(it.toDouble()) }
                 ?: "Belum ditentukan"
             binding.tvStartDate.text = tripDetail.tripStartDate ?: "Belum ditentukan"
             binding.tvEndDate.text = tripDetail.tripEndDate ?: "Belum ditentukan"
-
-            checkUserIdEqualsCreatedBy(tripDetail)
         }
 
         detailTripViewModel.isLoading.observe(this) { isLoading ->
@@ -172,19 +186,23 @@ class DetailTripActivity : AppCompatActivity() {
 
     private fun updateButtonVisibility(completed: Int, total: Int) {
         if (completed == total) {
-            binding.btnPrefences.visibility = View.VISIBLE
             binding.btnRekomendasi.visibility = View.VISIBLE
         } else {
-            binding.btnPrefences.visibility = View.GONE
             binding.btnRekomendasi.visibility = View.GONE
         }
     }
 
-    private fun checkUserIdEqualsCreatedBy(trip: DataTrip) {
-        if (userId == trip.createdBy) {
-            binding.btnPrefences.visibility = View.VISIBLE
-        } else {
-            binding.btnPrefences.visibility = View.GONE
+    private fun showLoading(isLoading: Boolean) {
+        binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                onBackPressed()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }

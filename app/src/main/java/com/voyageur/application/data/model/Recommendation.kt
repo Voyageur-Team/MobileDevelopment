@@ -63,7 +63,10 @@ data class Iteneraries(
 	val itineraryName: String,
 
 	@field:SerializedName("itinerary")
-	val itinerary: List<ItineraryItem>
+	val itinerary: List<ItineraryItem>,
+
+	@field:SerializedName("votes")
+	val votes: List<String>
 )
 
 data class ItineraryItem(
