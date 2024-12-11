@@ -5,23 +5,27 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.voyageur.application.R
 import com.voyageur.application.data.repository.AppPreferences
 import com.voyageur.application.databinding.ActivitySettingsBinding
+import com.voyageur.application.viewmodel.PlansViewModel
 import com.voyageur.application.viewmodel.TokenViewModel
 import com.voyageur.application.viewmodel.ViewModelFactory
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var pref: AppPreferences
-
+    private val plansViewModel: PlansViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +51,21 @@ class SettingsActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             logoutUser()
         }
+
+        plansViewModel.trips.observe(this) {
+            if (it.isNotEmpty()) {
+                binding.textView28.text = it.size.toString()
+            }
+        }
+
+        lifecycleScope.launch{
+            val token = pref.getToken().first()
+            val userId = pref.getUserId().first()
+            if(userId.isNotEmpty() && token.isNotEmpty()){
+                plansViewModel.getAllTripsUserId(userId, token)
+            }
+        }
+
     }
 
     private fun setUserData() {
@@ -55,7 +74,13 @@ class SettingsActivity : AppCompatActivity() {
             userName = pref.getName().first()
         }
 
+        val email: String
+        runBlocking {
+            email = pref.getEmail().first()
+        }
+
         binding.tvName.text = userName
+        binding.textView8.text = email
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -85,5 +110,4 @@ class SettingsActivity : AppCompatActivity() {
         }
         dialog.show()
     }
-
 }

@@ -58,6 +58,14 @@ class DetailTripActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Handler(Looper.getMainLooper()).postDelayed({
+            setupUI()
+        },2000)
+        observeViewModel()
+    }
+
     private fun setupUI() {
         binding.btnRekomendasi.visibility = View.GONE
         showLoading(true)
@@ -103,8 +111,6 @@ class DetailTripActivity : AppCompatActivity() {
                         detailTripViewModel.getTripDetail(tripId!!, token)
                         showLoading(false)
                         Toast.makeText(this@DetailTripActivity, "Rekomendasi berhasil dibuat", Toast.LENGTH_SHORT).show()
-
-
                     } else {
                         showLoading(false)
                         Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
@@ -120,6 +126,14 @@ class DetailTripActivity : AppCompatActivity() {
         }
 
         binding.btnHasil.setOnClickListener {
+            lifecycleScope.launch {
+                val token = pref.getToken().firstOrNull()
+                if (token != null && tripId != null) {
+                    detailTripViewModel.postFinalizeVoting(token, tripId!!)
+                } else {
+                    Toast.makeText(this@DetailTripActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+                }
+            }
             val intent = Intent(this, RecommendationActivity::class.java)
             intent.putExtra("TRIP_ID", tripId)
             startActivity(intent)
