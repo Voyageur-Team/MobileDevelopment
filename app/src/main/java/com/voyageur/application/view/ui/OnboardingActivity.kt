@@ -4,7 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Html
 import android.widget.TextView
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.viewpager.widget.ViewPager
 import com.voyageur.application.R
 import com.voyageur.application.data.adapter.OnboardingAdapter
@@ -22,9 +25,10 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
+        enableEdgeToEdge()
         setContentView(binding.root)
+
         supportActionBar?.hide()
 
         pref = AppPreferences.getInstance(applicationContext.dataStore)

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     tools:context=".view.ui.OnboardingActivity">
 
     <androidx.viewpager.widget.ViewPager
@@ -30,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="52dp"
         android:backgroundTint="@color/colorPrimary"
         android:paddingVertical="16dp"
         android:text="Menuju Halaman Login"
