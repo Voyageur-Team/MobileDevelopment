@@ -170,21 +170,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <Button
-            android:id="@+id/btnRekomendasi"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:backgroundTint="@color/colorPrimary"
-            android:text="Hasilkan Rekomendasi"
-            android:paddingVertical="16dp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/textView31"
             android:layout_width="wrap_content"
@@ -197,6 +182,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/cardView5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
@@ -219,10 +205,10 @@
                     android:layout_height="80dp"
                     android:layout_marginEnd="16dp"
                     android:scaleType="centerCrop"
-                    app:srcCompat="@drawable/sampleimg1"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/sampleimg1" />
 
                 <TextView
                     android:id="@+id/textView32"
@@ -295,38 +281,47 @@
                     app:layout_constraintTop_toBottomOf="@+id/textView33"
                     app:layout_constraintVertical_bias="0.5" />
 
+                <Button
+                    android:id="@+id/btnRekomendasi"
+                    android:layout_width="103dp"
+                    android:layout_height="46dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:text="Hasilkan Rekomendasi"
+                    android:textSize="8sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/sizeParticipants"
+                    app:layout_constraintTop_toBottomOf="@+id/textView33" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
         <Button
             android:id="@+id/btnHasilRekomendasi"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
-            android:backgroundTint="@color/colorPrimary"
+            android:layout_marginBottom="56dp"
+            android:backgroundTint="@color/colorSecondary"
+            android:paddingVertical="16dp"
             android:text="Lihat Rekomendasi"
             android:textStyle="bold"
-            android:paddingVertical="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnRekomendasi"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/btnHasil"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
+            android:layout_marginBottom="56dp"
             android:backgroundTint="@color/colorPrimary"
             android:paddingVertical="16dp"
             android:text="Hasil Akhir"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/btnHasilRekomendasi"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
