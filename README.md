@@ -14,6 +14,11 @@ Using the [Kotlin programming language](https://kotlinlang.org/) to develop appl
   <img src="android_preview4.png" width="20%">
 </p>
 
+# Android Architecture
+<p align="center">
+	<img src="figma_preview.png" width="100%"> 
+</p>
+
 ## Tech Stack
 ### Programming Language
 - **Kotlin**: Leverage Kotlin's concise syntax and modern features to build a robust and maintainable codebase.
