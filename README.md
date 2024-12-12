@@ -59,7 +59,6 @@ The project follows a modular MVVM (Model-View-ViewModel) architecture to ensure
 3. **Trip Recommendations**
    - Generate trip recommendations
    - Generate Itinerary trip
-   - 
 ---
 
 <p align="center">
