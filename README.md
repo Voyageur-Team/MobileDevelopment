@@ -16,7 +16,7 @@ Using the [Kotlin programming language](https://kotlinlang.org/) to develop appl
 
 # Android Architecture
 <p align="center">
-	<img src="figma_preview.png" width="100%"> 
+	<img src="android_architecture.png" width="100%"> 
 </p>
 
 ## Tech Stack
