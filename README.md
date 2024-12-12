@@ -1,7 +1,7 @@
 # Mobile Development
 Using the [Kotlin programming language](https://kotlinlang.org/) to develop applications. Using [Retrofit](https://square.github.io/retrofit/) to handle all things related to data connection from android to the internet. Using [Google Cloud](https://cloud.google.com/) to fetch API, store user data and to authenticate login and register systems.
 
-## Preview Fima
+## Preview Figma
 <p align="center">
 	<img src="figma_preview.png" width="100%"> 
 </p>
@@ -41,7 +41,7 @@ The project follows a modular MVVM (Model-View-ViewModel) architecture to ensure
 ### Installation Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/voyageur.git](https://github.com/Voyageur-Team/MobileDevelopment.git
+   git clone https://github.com/Voyageur-Team/MobileDevelopment.git
    cd voyageur
 2. Open the project in Android Studio.
 3. Sync the project with Gradle.
@@ -59,7 +59,12 @@ The project follows a modular MVVM (Model-View-ViewModel) architecture to ensure
 3. **Trip Recommendations**
    - Generate trip recommendations
    - Generate Itinerary trip
+   - 
+---
 
+<p align="center">
+  <strong>Discover Together, Explore With Voyageur</strong>
+</p>
 
 
 
