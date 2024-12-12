@@ -1,5 +1,7 @@
 package com.voyageur.application.view.ui
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -54,6 +56,8 @@ class LoginActivity : AppCompatActivity() {
         showLoading(false)
         setupSpannableString()
         setupObservers()
+        setAlphaToZero()
+        setupAnimation()
 
         binding.btnLogin.setOnClickListener {
             binding.etEmail.clearFocus()
@@ -166,5 +170,50 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
+    }
+
+    private fun setupAnimation() {
+        ObjectAnimator.ofFloat(binding.logoApp, View.TRANSLATION_X, -40f, 40f).apply {
+            duration = 5000
+            repeatCount = ObjectAnimator.INFINITE
+            repeatMode = ObjectAnimator.REVERSE
+        }.start()
+
+        val messageAnimator = ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(300)
+        val titleEmail = ObjectAnimator.ofFloat(binding.tvEmail, View.ALPHA, 1f).setDuration(300)
+        val emailAnimator = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(300)
+        val titlePassword = ObjectAnimator.ofFloat(binding.tvPassword, View.ALPHA, 1f).setDuration(300)
+        val passwordAnimator = ObjectAnimator.ofFloat(binding.etPassword, View.ALPHA, 1f).setDuration(300)
+        val checkBoxAnimator = ObjectAnimator.ofFloat(binding.checkBox, View.ALPHA, 1f).setDuration(300)
+        val registerText = ObjectAnimator.ofFloat(binding.tvAskAkun, View.ALPHA, 1f).setDuration(300)
+        val loginButtonAnimator = ObjectAnimator.ofFloat(binding.btnLogin, View.ALPHA, 1f).setDuration(300)
+
+        AnimatorSet().apply {
+            playSequentially(
+                messageAnimator,
+                titleEmail,
+                emailAnimator,
+                titlePassword,
+                passwordAnimator,
+                checkBoxAnimator,
+                registerText,
+                loginButtonAnimator
+            )
+            start()
+        }
+    }
+
+    private fun setAlphaToZero() {
+        val views = listOf( binding.etEmail, binding.etPassword, binding.btnLogin,
+            binding.tvEmail, binding.tvPassword, binding.tvWelcome, binding.tvAskAkun,
+            binding.checkBox
+        )
+
+        views.forEach { view ->
+            ObjectAnimator.ofFloat(view, "alpha", 0f).apply {
+                duration = 0
+                start()
+            }
+        }
     }
 }

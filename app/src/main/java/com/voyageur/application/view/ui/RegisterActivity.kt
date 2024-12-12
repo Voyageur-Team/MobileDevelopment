@@ -39,7 +39,8 @@ class RegisterActivity : AppCompatActivity() {
 
         showLoading(false)
         setupObservers()
-//        setupAnimation()
+        setAlphaToZero()
+        setupAnimation()
 
         binding.cbPassword.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -135,23 +136,47 @@ class RegisterActivity : AppCompatActivity() {
             repeatMode = ObjectAnimator.REVERSE
         }.start()
 
-        val messageAnimator = ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(500)
-        val nameAnimator = ObjectAnimator.ofFloat(binding.etName, View.ALPHA, 1f).setDuration(500)
-        val emailAnimator = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(500)
-        val passwordAnimator = ObjectAnimator.ofFloat(binding.etPassword, View.ALPHA, 1f).setDuration(500)
-        val passwordConAnimator = ObjectAnimator.ofFloat(binding.etConfirmPassword, View.ALPHA, 1f).setDuration(500)
-        val loginButtonAnimator = ObjectAnimator.ofFloat(binding.buttonRegister, View.ALPHA, 1f).setDuration(500)
+        val messageAnimator = ObjectAnimator.ofFloat(binding.tvWelcome, View.ALPHA, 1f).setDuration(300)
+        val titleName = ObjectAnimator.ofFloat(binding.tvName, View.ALPHA, 1f).setDuration(300)
+        val nameAnimator = ObjectAnimator.ofFloat(binding.etName, View.ALPHA, 1f).setDuration(300)
+        val titleEmail = ObjectAnimator.ofFloat(binding.tvEmail, View.ALPHA, 1f).setDuration(300)
+        val emailAnimator = ObjectAnimator.ofFloat(binding.etEmail, View.ALPHA, 1f).setDuration(300)
+        val titlePassword = ObjectAnimator.ofFloat(binding.tvPassword, View.ALPHA, 1f).setDuration(300)
+        val passwordAnimator = ObjectAnimator.ofFloat(binding.etPassword, View.ALPHA, 1f).setDuration(300)
+        val titlePasswordCon = ObjectAnimator.ofFloat(binding.tvConfirmPassword, View.ALPHA, 1f).setDuration(300)
+        val passwordConAnimator = ObjectAnimator.ofFloat(binding.etConfirmPassword, View.ALPHA, 1f).setDuration(300)
+        val checkBoxAnimator = ObjectAnimator.ofFloat(binding.cbPassword, View.ALPHA, 1f).setDuration(300)
+        val loginButtonAnimator = ObjectAnimator.ofFloat(binding.buttonRegister, View.ALPHA, 1f).setDuration(300)
 
         AnimatorSet().apply {
             playSequentially(
                 messageAnimator,
+                titleName,
                 nameAnimator,
+                titleEmail,
                 emailAnimator,
+                titlePassword,
                 passwordAnimator,
+                titlePasswordCon,
                 passwordConAnimator,
+                checkBoxAnimator,
                 loginButtonAnimator
             )
             start()
+        }
+    }
+
+    private fun setAlphaToZero() {
+        val views = listOf(
+            binding.tvName, binding.tvEmail, binding.tvPassword, binding.tvConfirmPassword, binding.etName, binding.etEmail, binding.etPassword, binding.etConfirmPassword,
+            binding.buttonRegister, binding.tvWelcome, binding.cbPassword
+        )
+
+        views.forEach { view ->
+            ObjectAnimator.ofFloat(view, "alpha", 0f).apply {
+                duration = 0
+                start()
+            }
         }
     }
 }

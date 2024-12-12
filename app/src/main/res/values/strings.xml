@@ -31,6 +31,24 @@
     <string name="login_gagal">Masukkan akun anda dengan benar!</string>
     <string name="login_success">Berhasil login</string>
     <string name="register_gagal">Gagal melakukan registrasi</string>
+    <string name="title_group">Voyageur</string>
+    <string name="about1">Voyageur adalah aplikasi perencana perjalanan kelompok yang revolusioner, dirancang untuk menyederhanakan dan meningkatkan pengalaman merencanakan perjalanan Anda. Dengan misi menciptakan kolaborasi yang mulus, Voyageur membantu kelompok mengatur perjalanan dengan efisien, menyeimbangkan preferensi individu dan kebutuhan kolektif.</string>
+    <string name="about2">Aplikasi ini menghadirkan fitur inovatif seperti perencanaan itinerary kolaboratif, pelacakan anggaran kelompok, dan rekomendasi destinasi cerdas yang didukung oleh algoritma mutakhir. Voyageur juga dilengkapi dengan fitur-fitur ramah pengguna, termasuk sistem voting untuk pengambilan keputusan.</string>
+    <string name="about3">Mulai merencanakan perjalanan kelompok Anda sekarang dengan Voyageur dan buat perjalanan Anda lebih mudah, lebih menyenangkan, dan lebih efisien!</string>
+    <string name="didukung_oleh">Didukung Oleh</string>
+    <string name="image_popular_destination">Gambar Popular Destination</string>
+    <string name="tentang_destinasi">Tentang Destinasi Ini</string>
+    <string name="tambah_rencana">Tambah Rencana</string>
+    <string name="logo_description">Logo aplikasi Voyageur</string>
+    <string name="hint_email">Masukkan email Anda</string>
+    <string name="email_label">Email</string>
+    <string name="hint_password">Masukkan kata sandi Anda</string>
+    <string name="password_label">Kata Sandi</string>
+    <string name="login_button">Masuk</string>
+    <string name="welcome_message">Selamat Datang di Voyageur</string>
+    <string name="register_prompt">Belum punya akun? Daftar di sini</string>
+    <string name="show_password">Tampilkan kata sandi</string>
+
 
 
     <string-array name="popular_destination">
@@ -74,6 +92,8 @@
         <item>$150</item>
         <item>$200</item>
     </string-array>
+
+
 
 
 </resources>

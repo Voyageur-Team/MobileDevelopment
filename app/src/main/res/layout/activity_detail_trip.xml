@@ -203,9 +203,7 @@
                     android:id="@+id/imageView10"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:layout_marginEnd="16dp"
                     android:scaleType="centerCrop"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/sampleimg1" />
@@ -283,15 +281,16 @@
 
                 <Button
                     android:id="@+id/btnRekomendasi"
-                    android:layout_width="103dp"
-                    android:layout_height="46dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:backgroundTint="@color/colorPrimary"
                     android:text="Hasilkan Rekomendasi"
-                    android:textSize="8sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/sizeParticipants"
-                    app:layout_constraintTop_toBottomOf="@+id/textView33" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView10" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
